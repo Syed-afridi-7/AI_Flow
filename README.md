@@ -24,22 +24,26 @@ No hallucinated requirements. No premature fixes. No broken git commits.
 
 ```mermaid
 flowchart TD
-    subgraph Phase 1: Product & Architecture
-        A["1. prd-generator<br/><b>Clarification & Scope</b>"] --> B["2. uiux-design-brief<br/><b>Design Tokens & States</b>"]
-        B --> C["3. system-architecture<br/><b>Topology & Contracts</b>"]
+    subgraph Phase 1: Product, Design & Architecture
+        A["1. prd-generator<br/><b>PRD: Requirements & Scope</b>"] --> B["2. trd-generator<br/><b>TRD: Technical Constraints & SLAs</b>"]
+        B --> C["3. app-flow<br/><b>App Flow & State Transitions</b>"]
+        C --> D["4. uiux-design-brief<br/><b>UI/UX Tokens & Component Library</b>"]
+        D --> E["5. backend-schema<br/><b>Backend Schema, ERD & DDL</b>"]
+        E --> F["6. system-architecture<br/><b>Topology & API Contracts</b>"]
+        F --> G["7. implementation-plan<br/><b>Phased Engineering Roadmap</b>"]
     end
 
     subgraph Phase 2: Execution & Quality
-        C --> D["4. task-to-skill<br/><b>Skill Modularization</b>"]
-        D --> E["5. playwright-e2e-testing<br/><b>E2E Testing Suite</b>"]
-        E --> F["6. systematic-debugging<br/><b>5-Step Root-Cause Analysis</b>"]
+        G --> H["8. task-to-skill<br/><b>Skill Modularization</b>"]
+        H --> I["9. playwright-e2e-testing<br/><b>E2E Testing Suite</b>"]
+        I --> J["10. systematic-debugging<br/><b>5-Step Root-Cause Analysis</b>"]
     end
 
     subgraph Phase 3: Auditing & Release
-        F --> G["7. security-gap-audit<br/><b>Pre-Launch Threat Audit</b>"]
-        G --> H["8. dead-code-cleanup<br/><b>Two-Phase Safe Pruning</b>"]
-        H --> I["9. rigorous-code-review<br/><b>Blocker & Regression Review</b>"]
-        I --> J["10. clean-git-commits<br/><b>Atomic Conventional Commits</b>"]
+        J --> K["11. security-gap-audit<br/><b>Pre-Launch Threat Audit</b>"]
+        K --> L["12. dead-code-cleanup<br/><b>Two-Phase Safe Pruning</b>"]
+        L --> M["13. rigorous-code-review<br/><b>Blocker & Regression Review</b>"]
+        M --> N["14. clean-git-commits<br/><b>Atomic Conventional Commits</b>"]
     end
 ```
 
@@ -48,9 +52,9 @@ flowchart TD
 ## ⚡ 3 Ways to Use AI_Flow
 
 ### 1. Direct Web UI Upload (Gemini, ChatGPT, Grok)
-- **Google Gemini:** Upload the repository folder or the single master [**`SKILL.md`**](SKILL.md) to Gemini (or inside a Gemini Gem). Gemini will recognize all 10 modules automatically!
+- **Google Gemini:** Upload the repository folder or the single master [**`SKILL.md`**](SKILL.md) to Gemini (or inside a Gemini Gem). Gemini will recognize all 14 modules automatically!
 - **ChatGPT Custom GPT:** Create a Custom GPT, upload [**`SKILL.md`**](SKILL.md) or the [`skills/`](skills/) folder into Knowledge, and paste [`AGENTS.md`](AGENTS.md) into Instructions.
-- **xAI Grok:** Copy and paste the prompt of the module you want to run from root files (e.g., [`PRD.md`](PRD.md), [`Debug.md`](Debug.md)).
+- **xAI Grok:** Copy and paste the prompt of the module you want to run from root files (e.g., [`PRD.md`](PRD.md), [`TRD.md`](TRD.md), [`BackendSchema.md`](BackendSchema.md)).
 
 ---
 
@@ -66,14 +70,16 @@ cp .env.example .env
 
 # 3. Run any skill and auto-save the output file
 python scripts/run.py --skill prd-generator --input "A crypto portfolio tracker"
-python scripts/run.py --skill systematic-debugging --input "TypeError: Cannot read properties of undefined" --provider openai
-python scripts/run.py --skill system-architecture --input "Real-time chat with WebSockets" --provider grok
+python scripts/run.py --skill trd-generator --input "Real-time trading system" --provider gemini
+python scripts/run.py --skill app-flow --input "Multi-step onboarding flow" --provider openai
+python scripts/run.py --skill backend-schema --input "SaaS billing & subscription models" --provider grok
+python scripts/run.py --skill implementation-plan --input "MVP release plan" --provider gemini
 ```
 
 ---
 
 ### 3. Native Agent Skills Installation (Antigravity & Claude Code)
-Install all 10 skills directly into your global agent environment with a single command:
+Install all 14 skills directly into your global agent environment with a single command:
 
 #### Windows (PowerShell)
 ```powershell
@@ -95,13 +101,17 @@ This registers the skills with:
 
 ## 📂 Skills Catalog & Reference
 
-All skills follow the official `skills/<skill-name>/SKILL.md` format, are unified in the root [**`SKILL.md`**](SKILL.md), and are paired with standalone root prompt templates:
+All 14 skills follow the official `skills/<skill-name>/SKILL.md` format, are unified in the root [**`SKILL.md`**](SKILL.md), and are paired with standalone root prompt templates:
 
 | Skill | Canonical Spec | Standalone Prompt | Triggering Condition |
 | :--- | :--- | :--- | :--- |
 | **`prd-generator`** | [`skills/prd-generator/SKILL.md`](skills/prd-generator/SKILL.md) | [`PRD.md`](PRD.md) | Initiating a new product, defining scope, or translating an unformed idea into a structured specification before coding. |
+| **`trd-generator`** | [`skills/trd-generator/SKILL.md`](skills/trd-generator/SKILL.md) | [`TRD.md`](TRD.md) | Translating product requirements into technical requirements, non-functional targets, latency/RPS budgets, and SLAs. |
+| **`app-flow`** | [`skills/app-flow/SKILL.md`](skills/app-flow/SKILL.md) | [`AppFlow.md`](AppFlow.md) | Mapping user navigation journeys, screen-to-screen transitions, permission gates, and edge-case state machines. |
 | **`uiux-design-brief`** | [`skills/uiux-design-brief/SKILL.md`](skills/uiux-design-brief/SKILL.md) | [`UIUX_Design.md`](UIUX_Design.md) | Translating requirements into UI/UX architecture, tokens, screen flows, or component contracts before frontend work. |
-| **`system-architecture`** | [`skills/system-architecture/SKILL.md`](skills/system-architecture/SKILL.md) | [`Architecture.md`](Architecture.md) | Architecting systems, selecting tech stacks, designing database schemas, or defining API contracts. |
+| **`backend-schema`** | [`skills/backend-schema/SKILL.md`](skills/backend-schema/SKILL.md) | [`BackendSchema.md`](BackendSchema.md) | Designing database schemas, Mermaid ERD, table DDL, keys, foreign key cascades, and high-performance composite indexes. |
+| **`system-architecture`** | [`skills/system-architecture/SKILL.md`](skills/system-architecture/SKILL.md) | [`Architecture.md`](Architecture.md) | Architecting systems, selecting tech stacks, designing topology, or defining API contracts. |
+| **`implementation-plan`** | [`skills/implementation-plan/SKILL.md`](skills/implementation-plan/SKILL.md) | [`ImplementationPlan.md`](ImplementationPlan.md) | Breaking down feature specifications into phased engineering implementation plans, dependencies, and test checkpoints. |
 | **`task-to-skill`** | [`skills/task-to-skill/SKILL.md`](skills/task-to-skill/SKILL.md) | [`TaskToSkill.md`](TaskToSkill.md) | Turning a completed engineering task or workflow into a permanent, reusable Agent Skill. |
 | **`playwright-e2e-testing`** | [`skills/playwright-e2e-testing/SKILL.md`](skills/playwright-e2e-testing/SKILL.md) | [`PlayWright.md`](PlayWright.md) | Configuring Playwright, mapping user journeys, or writing resilient browser tests. |
 | **`systematic-debugging`** | [`skills/systematic-debugging/SKILL.md`](skills/systematic-debugging/SKILL.md) | [`Debug.md`](Debug.md) | Investigating bugs, runtime errors, or failing tests using a strict 5-step hypothesis and proof protocol. |
@@ -116,7 +126,7 @@ All skills follow the official `skills/<skill-name>/SKILL.md` format, are unifie
 
 This repository includes native configuration adapters out of the box:
 
-- **[SKILL.md](SKILL.md):** Root master skill for direct upload to Gemini or agent runtimes.
+- **[SKILL.md](SKILL.md):** Root master skill covering all 14 modules for direct upload to Gemini or agent runtimes.
 - **[AGENTS.md](AGENTS.md):** Universal agent instructions recognized by all modern agents.
 - **[CLAUDE.md](CLAUDE.md):** Memory context and skill mappings for Claude Code.
 - **[.cursor/rules/](.cursor/rules/ai-flow.mdc):** Cursor IDE workspace rules applying skills during active editor sessions.

@@ -6,8 +6,12 @@ This is **AI_Flow**, a repository providing standardized Agentic Skills for soft
 ## Available Skills
 The following skills are available in `skills/` and can be invoked based on the task:
 - `prd-generator`: Initiating new products or features. Ask clarifying questions first.
+- `trd-generator`: Translating PRD into technical requirements, SLAs, scalability, and security models.
+- `app-flow`: Mapping navigational user flows, state transitions, and edge-case recoveries.
 - `uiux-design-brief`: Generating comprehensive UI/UX specifications, design tokens, and states.
+- `backend-schema`: Designing database schemas (ERD, DDL, keys, composite indexes, and seed plans).
 - `system-architecture`: Designing system topologies, API contracts, database schemas, and caching.
+- `implementation-plan`: Breaking down features into phased engineering implementation plans.
 - `task-to-skill`: Converting completed tasks into permanent, reusable Agent Skills.
 - `playwright-e2e-testing`: End-to-end browser testing and Playwright configuration.
 - `systematic-debugging`: 5-step root-cause debugging. Never modify code before empirical verification.
@@ -19,4 +23,3 @@ The following skills are available in `skills/` and can be invoked based on the 
 ## Development & Git Workflow
 - Always format commits using Conventional Commits (`type(scope): summary`).
 - When fixing errors or removing dead code, strictly obey the two-phase verification stop.
-
