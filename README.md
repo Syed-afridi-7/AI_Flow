@@ -2,6 +2,7 @@
 
 > **A standardized, cross-runtime Agentic Skills suite & prompt framework for all modern AI coding agents.**
 
+[![Validate Skills](https://github.com/Syed-afridi-7/AI_Flow/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/Syed-afridi-7/AI_Flow/actions/workflows/validate-skills.yml)
 [![Agent Skills Specification](https://img.shields.io/badge/Agent_Skills-Open_Standard-8A2BE2?style=for-the-badge&logo=anthropic)](https://agentskills.io)
 [![Antigravity](https://img.shields.io/badge/Antigravity-Compatible-4285F4?style=for-the-badge&logo=google)](https://deepmind.google)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Supported-D97706?style=for-the-badge&logo=anthropic)](https://claude.ai)
@@ -13,7 +14,7 @@
 
 ## 📌 Overview
 
-**AI_Flow** transforms chaotic prompt interactions into disciplined, production-grade engineering workflows. Compliant with the [Agent Skills Open Specification](https://agentskills.io), it equips your AI pair programmers (**Google Antigravity**, **Claude Code**, **Cursor**, **GitHub Copilot**, **Windsurf**, and **Codex**) with executable, self-contained skills covering every stage of the software lifecycle.
+**AI_Flow** transforms chaotic prompt interactions into disciplined, production-grade engineering workflows. Compliant with the [Agent Skills Open Specification](https://agentskills.io), it equips your AI pair programmers (**Google Antigravity**, **Claude Code**, **Cursor**, **GitHub Copilot**, **Windsurf**, and **Codex**) &mdash; or direct web chat interfaces (**Google Gemini**, **ChatGPT**, and **xAI Grok**) &mdash; with executable, self-contained skills covering every stage of the software lifecycle.
 
 No hallucinated requirements. No premature fixes. No broken git commits.
 
@@ -44,17 +45,43 @@ flowchart TD
 
 ---
 
-## ⚡ Quick Start: Install Skills
+## ⚡ 3 Ways to Use AI_Flow
 
+### 1. Direct Web UI Upload (Gemini, ChatGPT, Grok)
+- **Google Gemini:** Upload the repository folder or the single master [**`SKILL.md`**](SKILL.md) to Gemini (or inside a Gemini Gem). Gemini will recognize all 10 modules automatically!
+- **ChatGPT Custom GPT:** Create a Custom GPT, upload [**`SKILL.md`**](SKILL.md) or the [`skills/`](skills/) folder into Knowledge, and paste [`AGENTS.md`](AGENTS.md) into Instructions.
+- **xAI Grok:** Copy and paste the prompt of the module you want to run from root files (e.g., [`PRD.md`](PRD.md), [`Debug.md`](Debug.md)).
+
+---
+
+### 2. Standalone Auto-Writer CLI (Generate Files Straight to Disk)
+Don't want to use any agent CLIs? Run our standalone Python auto-writer that calls the **Gemini**, **OpenAI**, or **Grok** APIs directly and saves markdown documents directly to your drive:
+
+```bash
+# 1. Install dependencies
+pip install requests python-dotenv
+
+# 2. Configure your API keys in .env
+cp .env.example .env
+
+# 3. Run any skill and auto-save the output file
+python scripts/run.py --skill prd-generator --input "A crypto portfolio tracker"
+python scripts/run.py --skill systematic-debugging --input "TypeError: Cannot read properties of undefined" --provider openai
+python scripts/run.py --skill system-architecture --input "Real-time chat with WebSockets" --provider grok
+```
+
+---
+
+### 3. Native Agent Skills Installation (Antigravity & Claude Code)
 Install all 10 skills directly into your global agent environment with a single command:
 
-### Windows (PowerShell)
+#### Windows (PowerShell)
 ```powershell
 .\scripts\install.ps1
 ```
 *(Optionally pass `-Symlink` to create live development symlinks).*
 
-### macOS / Linux (Bash)
+#### macOS / Linux (Bash)
 ```bash
 chmod +x ./scripts/install.sh && ./scripts/install.sh
 ```
@@ -68,7 +95,7 @@ This registers the skills with:
 
 ## 📂 Skills Catalog & Reference
 
-All skills follow the official `skills/<skill-name>/SKILL.md` format and are paired with standalone root prompt templates for manual use:
+All skills follow the official `skills/<skill-name>/SKILL.md` format, are unified in the root [**`SKILL.md`**](SKILL.md), and are paired with standalone root prompt templates:
 
 | Skill | Canonical Spec | Standalone Prompt | Triggering Condition |
 | :--- | :--- | :--- | :--- |
@@ -89,6 +116,7 @@ All skills follow the official `skills/<skill-name>/SKILL.md` format and are pai
 
 This repository includes native configuration adapters out of the box:
 
+- **[SKILL.md](SKILL.md):** Root master skill for direct upload to Gemini or agent runtimes.
 - **[AGENTS.md](AGENTS.md):** Universal agent instructions recognized by all modern agents.
 - **[CLAUDE.md](CLAUDE.md):** Memory context and skill mappings for Claude Code.
 - **[.cursor/rules/](.cursor/rules/ai-flow.mdc):** Cursor IDE workspace rules applying skills during active editor sessions.

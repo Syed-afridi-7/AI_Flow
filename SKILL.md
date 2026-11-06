@@ -180,3 +180,4 @@ Conduct an adversarial audit without modifying code:
 | "I'll answer the PRD questions myself to save time." | Assumptions guarantee rework. The human stakeholder must define their vision. |
 | "I'll bundle all these changes into one commit." | Mega-commits ruin bisectability and code reviews. Split into atomic units. |
 | "Everything looks good, I'll approve without deep checks." | Superficial reviews allow production crashes and security leaks. Audit thoroughly. |
+
