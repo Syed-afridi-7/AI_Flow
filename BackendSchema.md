@@ -37,3 +37,4 @@ Deliver the Backend Schema with these exact sections:
    - Realistic seed dataset structure for development and test suites
 
 Be explicit with types and constraints. Never use generic pseudocode when valid SQL/DDL statements can be provided.
+

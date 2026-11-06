@@ -57,3 +57,4 @@ Map concrete indexes to query access patterns:
 | "We'll let the ORM auto-generate whatever schema it wants." | ORM auto-migrations frequently omit check constraints, cascade rules, and optimized composite indexes. |
 | "Indexes can be added when queries get slow." | Retrofitting indexes on massive production tables causes lock contention and downtime. |
 | "Storing everything in a JSON column is faster to build." | Unstructured JSON destroys query performance, validation guarantees, and relational integrity. |
+

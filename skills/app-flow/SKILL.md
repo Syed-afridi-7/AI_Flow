@@ -57,3 +57,4 @@ For all multi-step processes (e.g., checkout, form wizards, async document proce
 | "Developers can figure out navigation from screen mockups." | Static screens hide conditional logic, modal states, and back-button behavior. |
 | "Error and 404 screens can be added at the end." | Untracked error paths lead to blank screens and broken user experiences. |
 | "A single happy-path flowchart is sufficient." | Real users encounter expired sessions, lost connections, and permission denials. |
+

@@ -35,3 +35,4 @@ Deliver the App Flow with these exact sections:
    - Canonical URL structures, query parameters, and browser back/forward history behavior
 
 Be exhaustive. Map every path an end user can take, leaving no dead ends or untracked transition states.
+

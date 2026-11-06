@@ -42,3 +42,4 @@ Deliver the TRD with these exact sections:
    - Containerization, build pipelines, and zero-downtime deployment strategy (Blue/Green or Canary)
 
 Be technical, concrete, and unambiguous. Flag any unverified assumptions as open technical risks.
+

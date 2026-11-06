@@ -61,3 +61,4 @@ A non-negotiable checklist that must be satisfied before closing the project/fea
 | "We can jump straight to building UI screens." | UI built without backend contracts or data models requires heavy rewrites. |
 | "Phase verification is too slow, we'll test at the end." | Finding foundational bugs in Phase 5 costs 10x more time than catching them in Phase 1. |
 | "Task breakdown doesn't need file paths." | Omitting file paths leads to disorganized code placement and duplicate utilities. |
+

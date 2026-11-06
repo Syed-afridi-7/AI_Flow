@@ -62,3 +62,4 @@ Produce the TRD across these 7 structured sections:
 | "A PRD is enough to start coding." | PRDs describe user needs; TRDs define technical reality, scale limits, and reliability constraints. |
 | "We'll tune performance after launch." | Latency and throughput bottlenecks are difficult to solve without upfront architectural targets. |
 | "Security can be addressed during code review." | Auth models, data encryption, and RBAC must be architected before writing schemas or APIs. |
+
