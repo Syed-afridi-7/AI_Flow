@@ -1,19 +1,21 @@
 # GitHub Copilot Instructions
 
 ## Repository Overview
-This repository provides **AI_Flow**, a standardized set of Agentic Skills covering the end-to-end software development lifecycle.
+This repository provides **AI_Flow**, a standardized framework of 30 Agentic Skills and 60 dual-agent personas covering the full software engineering lifecycle, freelance client management, and content growth under the [Agent Skills Open Specification](https://agentskills.io).
 
 ## Engineering Standards & Skills
-When responding to engineering prompts in this workspace, follow the standardized workflows located in `skills/`:
-- **Product Definition (`skills/prd-generator/SKILL.md`)**: Clarify scope, personas, and acceptance criteria before writing specifications.
-- **Technical Requirements (`skills/trd-generator/SKILL.md`)**: Define throughput, latency budgets, availability SLAs, and compliance boundaries.
-- **App Flow (`skills/app-flow/SKILL.md`)**: Map screen-to-screen transitions, state machines, and edge-case error flows.
-- **UI/UX Design (`skills/uiux-design-brief/SKILL.md`)**: Define tokens, responsive layout rules, component states, and accessibility standards.
-- **Backend Schema (`skills/backend-schema/SKILL.md`)**: Design ERDs, DDL tables, foreign key cascades, and high-performance composite indexes.
-- **Architecture (`skills/system-architecture/SKILL.md`)**: Specify high-level topology, DB schemas, API contracts, and resilience policies.
-- **Implementation Plan (`skills/implementation-plan/SKILL.md`)**: Break down work into atomic, dependency-ordered engineering tasks.
-- **Testing (`skills/playwright-e2e-testing/SKILL.md`)**: Setup resilient E2E Playwright tests with user-facing locators and auth fixtures.
-- **Debugging (`skills/systematic-debugging/SKILL.md`)**: Restate problem, hypothesize causes, verify with probes, and apply minimal fixes.
-- **Security (`skills/security-gap-audit/SKILL.md`)**: Audit for auth, IDOR, injection, and secrets vulnerabilities without modifying code until confirmed.
-- **Dead Code (`skills/dead-code-cleanup/SKILL.md`)**: Audit unused files and dependencies first; execute only with explicit consent.
-- **Git Commits (`skills/clean-git-commits/SKILL.md`)**: Format all commits using Conventional Commits (`type(scope): summary`).
+When responding to engineering prompts in this workspace, follow the standardized workflows located in `skills/`. Every skill folder contains a canonical `SKILL.md` and dual-agent personas (`agents/generator.md` and `agents/validator.md`):
+
+- **Phase 1: Product & Architecture:** `prd-generator`, `trd-generator`, `app-flow`, `uiux-design-brief`, `backend-schema`, `system-architecture`, `implementation-plan`.
+- **Phase 2: Execution & Quality:** `task-to-skill`, `playwright-e2e-testing`, `systematic-debugging`.
+- **Phase 3: Auditing & Release:** `security-gap-audit`, `dead-code-cleanup`, `rigorous-code-review`, `clean-git-commits`.
+- **Phase 4: Design Systems & Frontend:** `design-system-tokens`, `landing-page-converter`, `accessibility-wcag-audit`.
+- **Phase 5: API, Database & Performance:** `api-contract-generator`, `db-migration-optimizer`, `performance-profiling`.
+- **Phase 6: DevOps, CI/CD & FinOps:** `devops-docker-deploy`, `ci-cd-pipeline-builder`, `finops-token-optimizer`.
+- **Phase 7: Freelance & Client Business Operations:** `freelance-client-onboarding`, `email-inbox-triage`, `invoice-billing-tracker`.
+- **Phase 8: Social Growth, Content & Founder OS:** `insta-reel-creator`, `seo-content-strategist`, `social-copy-repurposer`, `executive-time-ledger`.
+
+## Key Architectural Principles
+- **Dual-Agent Peer Review:** Execute skills autonomously with peer-review using `python scripts/run.py --skill <name> --input "<prompt>" --mode dual`.
+- **Two-Phase Enforcement:** High-risk tasks (security fixes, dead code pruning, refactors) enforce an **Audit / Verify First** stop before modifying code.
+- **Atomic Commits:** Format all commits using Conventional Commits (`type(scope): summary`).

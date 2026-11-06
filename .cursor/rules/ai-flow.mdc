@@ -6,67 +6,73 @@ alwaysApply: true
 
 # AI_Flow Rules for Cursor
 
-When designing, implementing, debugging, auditing, or planning features, adhere strictly to the **AI_Flow** Agent Skills framework defined in `skills/`. Every software engineering activity corresponds to one of the 14 standardized skills across three lifecycle phases:
+When designing, implementing, debugging, auditing, or planning features, adhere strictly to the **AI_Flow** Agent Skills framework defined in `skills/`. Every software engineering activity corresponds to one of the 30 standardized skills across eight lifecycle phases:
 
 ---
 
 ## 🏗️ Phase 1: Product, Requirements & Architecture
-
-Before writing production code, establish clear specifications, architectural boundaries, and contracts:
-
-1. **`skills/prd-generator/SKILL.md` (PRD Generation):**
-   - Use when defining scope, clarifying requirements, or drafting a Product Requirements Document (PRD).
-   - Conduct structured persona discovery, establish measurable success metrics, and strictly demarcate MVP vs. post-MVP scope.
-2. **`skills/trd-generator/SKILL.md` (Technical Requirements):**
-   - Use when defining non-functional requirements (NFRs), throughput targets (RPS), p95/p99 latency budgets, uptime SLAs, and operational constraints.
-3. **`skills/app-flow/SKILL.md` (Application Flow & Navigation):**
-   - Use when mapping user navigation journeys, screen-to-screen transitions, permission gates, and navigational state machines.
-4. **`skills/uiux-design-brief/SKILL.md` (UI/UX Design Architecture):**
-   - Use when translating product requirements into UI/UX architecture, visual tokens (hex/8px grid), screen layouts, accessibility standards (WCAG AA), and the 5 screen states (loading, empty, populated, error, partial).
-5. **`skills/backend-schema/SKILL.md` (Database Schema Design):**
-   - Use when modeling database entities, generating Mermaid ERD diagrams, authoring strict SQL DDL migrations, setting foreign key cascade rules, and designing composite indexes for query performance.
-6. **`skills/system-architecture/SKILL.md` (System Architecture):**
-   - Use when architecting distributed or modular systems, producing topology diagrams, defining service boundaries, establishing API contracts, and evaluating scalability/resilience trade-offs.
-7. **`skills/implementation-plan/SKILL.md` (Implementation Planning):**
-   - Use when breaking down features into dependency-ordered engineering roadmaps with phased tasks, specific file paths, and verifiable test checkpoints.
+1. **`skills/prd-generator/SKILL.md` (PRD Generation):** Persona discovery, success metrics, MVP vs post-MVP scope matrix.
+2. **`skills/trd-generator/SKILL.md` (Technical Requirements):** Non-functional requirements, RPS targets, p95/p99 latency budgets, uptime SLAs.
+3. **`skills/app-flow/SKILL.md` (Application Flow & Navigation):** Screen navigation maps, route state machines, edge-case recovery.
+4. **`skills/uiux-design-brief/SKILL.md` (UI/UX Design Architecture):** Visual tokens, screen layouts, accessibility standards, 5 screen states.
+5. **`skills/backend-schema/SKILL.md` (Database Schema Design):** Mermaid ERD, SQL DDL migrations, cascade rules, composite indexes.
+6. **`skills/system-architecture/SKILL.md` (System Architecture):** Topology diagrams, service boundaries, API contracts, scalability.
+7. **`skills/implementation-plan/SKILL.md` (Implementation Planning):** Phased task roadmaps, specific file paths, test checkpoints.
 
 ---
 
 ## ⚡ Phase 2: Execution & Quality
-
-When authoring features, testing, or diagnosing issues, follow disciplined execution patterns:
-
-8. **`skills/task-to-skill/SKILL.md` (Task to Skill Extraction):**
-   - Use when converting repeatable engineering workflows, complex multi-step processes, or domain solutions into permanent, reusable Agent Skills adhering to the Agent Skills specification.
-9. **`skills/playwright-e2e-testing/SKILL.md` (Browser & E2E Testing):**
-   - Use when setting up automated end-to-end browser tests using Playwright. Favor accessible role-based selectors (`getByRole`), robust auth fixtures (`storageState`), and hermetic test isolation.
-10. **`skills/systematic-debugging/SKILL.md` (Systematic Debugging):**
-    - Use when investigating runtime errors, test failures, or unexpected behaviors.
-    - **Never shotgun debug:** Strictly adhere to the 5-step protocol (Restate problem &rarr; Formulate 3 ranked hypotheses &rarr; Instrument & probe &rarr; Validate evidence &rarr; Apply minimal atomic fix).
+8. **`skills/task-to-skill/SKILL.md` (Task to Skill Extraction):** Convert repeatable workflows into permanent Agent Skills.
+9. **`skills/playwright-e2e-testing/SKILL.md` (Browser & E2E Testing):** Role-based selectors (`getByRole`), auth fixtures, hermetic test isolation.
+10. **`skills/systematic-debugging/SKILL.md` (Systematic Debugging):** 5-step hypothesis protocol. Never modify code before empirical verification.
 
 ---
 
 ## 🔍 Phase 3: Auditing & Release
-
-Before merging code, pruning assets, or shipping changes, apply rigorous safeguards:
-
-11. **`skills/security-gap-audit/SKILL.md` (Security Gap Audit):**
-    - Use when conducting pre-launch security audits and vulnerability assessments across the top 10 attack vectors (auth bypass, IDOR, SQL injection, secret leakage, CORS, SSRF, etc.).
-    - Deliver read-only reports with file paths and exploit scenarios. Never modify production code during the audit phase.
-12. **`skills/dead-code-cleanup/SKILL.md` (Dead Code Pruning):**
-    - Use when pruning unused files, dead imports, obsolete dependencies, or abandoned endpoints.
-    - Execute a two-phase cleanup: produce a confidence-scored audit table (>90% confidence threshold) and wait for explicit confirmation before deleting files.
-13. **`skills/rigorous-code-review/SKILL.md` (Rigorous Code Review):**
-    - Use when reviewing pull requests, git diffs, or staged modifications.
-    - Conduct a two-stage evaluation: first assess correctness, regressions, and security blockers with production failure scenarios; then provide actionable, prioritized improvements.
-14. **`skills/clean-git-commits/SKILL.md` (Clean Git Commits):**
-    - Use when staging git changes and organizing commits.
-    - Split work into atomic, independently compilable commits adhering strictly to the Conventional Commits specification (`feat`, `fix`, `docs`, `refactor`, etc.) with clear rationale.
+11. **`skills/security-gap-audit/SKILL.md` (Security Gap Audit):** Pre-launch read-only audit across 10 threat vectors before writing fixes.
+12. **`skills/dead-code-cleanup/SKILL.md` (Dead Code Cleanup):** Two-phase contract (Audit table with >90% confidence &rarr; Execute with approval).
+13. **`skills/rigorous-code-review/SKILL.md` (Rigorous Code Review):** Staff engineer review evaluating blockers and production failure scenarios.
+14. **`skills/clean-git-commits/SKILL.md` (Clean Git Commits):** Atomic Conventional Commits (`feat`, `fix`, `docs`, `refactor`) with explanatory bodies.
 
 ---
 
-## 🛡️ Core Operating Principles
+## 🎨 Phase 4: Design Systems & Frontend (New)
+15. **`skills/design-system-tokens/SKILL.md` (Design System Tokens):** 3-tier DTCG tokens, light/dark mode parity, Tailwind config variables.
+16. **`skills/landing-page-converter/SKILL.md` (Landing Page Copy & CRO):** Direct-response SaaS copy, hero value proposition, conversion funnel.
+17. **`skills/accessibility-wcag-audit/SKILL.md` (Accessibility WCAG Audit):** Automated WCAG 2.1 AA/AAA compliance audit, ARIA tree analysis.
 
-- **Dependency-First Progression:** PRD &rarr; TRD &rarr; App Flow & UI/UX &rarr; Backend Schema & System Architecture &rarr; Implementation Plan &rarr; Execution & Testing &rarr; Audit & Review &rarr; Clean Commits.
-- **Two-Phase Action Protocol:** For audits, dead code elimination, and security remediations, present findings and require explicit confirmation prior to altering the codebase.
-- **Zero Hallucinated Requirements:** Clarify ambiguous business rules or architectural constraints before proceeding with specifications or implementation.
+---
+
+## 🔌 Phase 5: API, Database & Performance (New)
+18. **`skills/api-contract-generator/SKILL.md` (API Contract Generator):** OpenAPI 3.1 & tRPC contracts, mock servers, RFC 7807 error envelopes.
+19. **`skills/db-migration-optimizer/SKILL.md` (Database Migration Optimizer):** Zero-downtime migrations, lock avoidance, concurrent indexing, query tuning.
+20. **`skills/performance-profiling/SKILL.md` (Performance Profiling):** Core Web Vitals (LCP, CLS, INP), bundle analysis, memory leak inspection.
+
+---
+
+## 🚢 Phase 6: DevOps, CI/CD & FinOps (New)
+21. **`skills/devops-docker-deploy/SKILL.md` (Docker Containerization & Deploy):** Multi-stage Dockerfiles, non-root user security, Docker Compose.
+22. **`skills/ci-cd-pipeline-builder/SKILL.md` (CI/CD Pipeline Builder):** GitHub Actions workflows, minimal permissions, action SHA pinning.
+23. **`skills/finops-token-optimizer/SKILL.md` (FinOps & Token Optimization):** Static prefix prompt caching (>1024 tokens), context pruning, model tiering.
+
+---
+
+## 💼 Phase 7: Freelance & Client Business Operations (New)
+24. **`skills/freelance-client-onboarding/SKILL.md` (Freelance Client Onboarding):** SOW contracts, scope boundary matrices, milestone billing schedules.
+25. **`skills/email-inbox-triage/SKILL.md` (Email Inbox Triage):** Priority triage (P0-P5), client communications drafting, task extraction.
+26. **`skills/invoice-billing-tracker/SKILL.md` (Invoice & Billing Tracker):** Itemized milestone invoicing, accounts receivable aging, payment reminders.
+
+---
+
+## 📈 Phase 8: Social Growth, Content & Founder OS (New)
+27. **`skills/insta-reel-creator/SKILL.md` (Instagram Reel Creator):** 5-beat spoken vertical video scripts (30-45s), hookscore >=80, slop sanitizing.
+28. **`skills/seo-content-strategist/SKILL.md` (SEO Content Strategy):** Search intent mapping, pillar-cluster topic modeling, EEAT content briefs.
+29. **`skills/social-copy-repurposer/SKILL.md` (Social Copy Repurposer):** Transforming engineering PRs/devlogs into 5-tweet threads and LinkedIn posts.
+30. **`skills/executive-time-ledger/SKILL.md` (Founder Executive Time Ledger):** High-leverage ($10k/hr) audit, deep-work block protection, devlogs.
+
+---
+
+## 🛡️ Core Operating Guardrails
+- **Dual-Agent Execution:** All skills support autonomous peer-review via `python scripts/run.py --skill <name> --input "<prompt>" --mode dual`.
+- **Two-Phase Enforcement:** High-risk tasks (security fixes, dead code pruning, refactors) enforce an **Audit / Verify First** stop before modifying code.
+- **Zero Hallucination:** Agents must ask clarifying questions rather than guessing ambiguous business logic.
