@@ -15,6 +15,7 @@ HOME_DIR="$HOME"
 DESTINATIONS=(
     "$HOME_DIR/.agents/skills"
     "$HOME_DIR/.gemini/antigravity/skills"
+    "$HOME_DIR/.gemini/antigravity-cli/skills"
     "$HOME_DIR/.claude/skills"
 )
 

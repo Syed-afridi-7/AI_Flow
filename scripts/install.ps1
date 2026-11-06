@@ -24,6 +24,7 @@ if ($Target -in @('all', 'agents')) {
 }
 if ($Target -in @('all', 'antigravity')) {
     $Destinations += Join-Path $HomeDir ".gemini\antigravity\skills"
+    $Destinations += Join-Path $HomeDir ".gemini\antigravity-cli\skills"
 }
 if ($Target -in @('all', 'claude')) {
     $Destinations += Join-Path $HomeDir ".claude\skills"
