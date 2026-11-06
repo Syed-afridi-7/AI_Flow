@@ -69,3 +69,4 @@ git commit -m "<type>(<scope>): <summary>" -m "<body>"
 | "It's all part of my session, one commit is fine." | Mega-commits make `git bisect` and code review painful. Split them. |
 | "The body explanation isn't necessary." | The commit title says WHAT changed; the body explains WHY. Future maintainers need the WHY. |
 | "I'll format the commits later with rebase." | Doing it right immediately saves rebase conflicts and time. |
+

@@ -56,3 +56,4 @@ Only after the root cause is proven:
 | "I've seen this error before, I know the fix." | Similar errors often have completely different root causes. Verify first. |
 | "A quick edit will test my theory faster." | Code changes introduce secondary variables and mask the real bug. |
 | "While I'm here, I'll clean up this adjacent function." | Conflating fixes with refactors makes regressions impossible to isolate. |
+

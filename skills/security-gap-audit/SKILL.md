@@ -40,3 +40,4 @@ If any of the 10 vectors are clean and well-defended, **state so explicitly** (e
 ## Rules & Constraints
 - **MANDATORY SAFEGUARD:** Do NOT modify any application code during the audit. Deliver the report and wait for user approval before applying any patches.
 - Highlight any finding requiring secrets rotation immediately as Critical.
+

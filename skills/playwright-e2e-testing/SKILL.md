@@ -41,3 +41,4 @@ Execute the testing setup through these sequential steps:
 ## Rules & Constraints
 - Never use arbitrary `page.waitForTimeout(5000)`. Always await observable web-first assertions (`toBeVisible()`, `toHaveText()`).
 - Always verify all tests pass locally before declaring completion.
+

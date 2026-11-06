@@ -37,3 +37,4 @@ done
 
 echo ""
 echo "Installation complete! All 10 skills are now available to your AI agents."
+

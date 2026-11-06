@@ -19,3 +19,4 @@ The following skills are available in `skills/` and can be invoked based on the 
 ## Development & Git Workflow
 - Always format commits using Conventional Commits (`type(scope): summary`).
 - When fixing errors or removing dead code, strictly obey the two-phase verification stop.
+

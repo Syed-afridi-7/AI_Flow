@@ -19,3 +19,4 @@ When generating code, debugging, auditing, or planning features, adhere to the A
 
 4. **Conventional Commits:**
    Follow `skills/clean-git-commits/SKILL.md`. Generate atomic, well-typed commits (`feat`, `fix`, `docs`, `refactor`, etc.) with imperative summaries and descriptive bodies.
+

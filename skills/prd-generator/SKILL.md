@@ -48,3 +48,4 @@ Once clarifying answers are received, output the PRD using the following structu
 | "The idea seems simple enough to skip questions." | Simple ideas carry the most implicit assumptions. Ask first. |
 | "I'll answer the clarifying questions myself." | Assumptions guarantee rework. The user must define their vision. |
 | "I'll include nice-to-haves in the MVP section." | Scope bloat delays delivery. Push secondary features to v2/Later. |
+

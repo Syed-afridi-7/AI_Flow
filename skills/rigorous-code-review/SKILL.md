@@ -49,3 +49,4 @@ For every **Blocker** and **Warning**, provide:
 ## Rules & Constraints
 - Provide actionable replacement code for every blocker.
 - Never give performative rubber-stamp approvals ("Looks good to me!") when unhandled error conditions exist.
+

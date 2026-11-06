@@ -41,3 +41,4 @@ Produce the design brief adhering to these 10 deliverables:
 | Omitting empty/error states | Every screen must have a designed empty slate and error recovery action. |
 | Neglecting keyboard navigation | Specify focus rings and tab order alongside mouse clicks. |
 | Arbitrary colors without semantic tokens | Map every color to a semantic variable token with defined contrast ratios. |
+

@@ -28,3 +28,4 @@ The skills below are defined in [`skills/`](./skills) and follow the [Agent Skil
 1. **Verify Before Action:** For high-impact actions (audits, dead code deletion, security fixes, large refactors), always perform an audit / verification step and obtain user confirmation before altering production code.
 2. **Never Shotgun Debug:** Adhere strictly to the 5-step hypothesis and proof protocol in [`skills/systematic-debugging/SKILL.md`](./skills/systematic-debugging/SKILL.md).
 3. **Keep Commits Clean & Atomic:** Every commit must follow Conventional Commits and pass builds independently per [`skills/clean-git-commits/SKILL.md`](./skills/clean-git-commits/SKILL.md).
+

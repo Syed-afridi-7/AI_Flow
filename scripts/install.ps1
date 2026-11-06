@@ -56,3 +56,4 @@ foreach ($dest in $Destinations) {
 }
 
 Write-Host "`nInstallation complete! All 10 skills are now available to your AI agents." -ForegroundColor Yellow
+

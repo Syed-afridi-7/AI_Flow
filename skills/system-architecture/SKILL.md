@@ -41,3 +41,4 @@ Deliver the architecture specification with the following structured sections:
 ## Rules & Constraints
 - Be opinionated. Never list 5 possible databases without explicitly choosing one with rationale.
 - If a technical requirement is ambiguous or underspecified, flag the risk explicitly instead of making silent assumptions.
+

@@ -13,3 +13,4 @@ When responding to engineering prompts in this workspace, follow the standardize
 - **Security (`skills/security-gap-audit/SKILL.md`)**: Audit for auth, IDOR, injection, and secrets vulnerabilities without modifying code until confirmed.
 - **Dead Code (`skills/dead-code-cleanup/SKILL.md`)**: Audit unused files and dependencies first; execute only with explicit consent.
 - **Git Commits (`skills/clean-git-commits/SKILL.md`)**: Format all commits using Conventional Commits (`type(scope): summary`).
+

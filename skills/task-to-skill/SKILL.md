@@ -31,3 +31,4 @@ Analyze the completed task and generate a new `SKILL.md` with these 7 components
 ## Rules & Constraints
 - The generated skill must be self-contained: assume the executing agent has no access to the previous chat history.
 - Never write narrative stories about "how we did it today"; write an authoritative, reusable reference specification.
+

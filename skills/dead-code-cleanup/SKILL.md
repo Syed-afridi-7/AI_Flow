@@ -54,3 +54,4 @@ Upon receiving approval:
 | "It's obvious this file is unused, I'll delete it right away." | Dynamic imports or build plugins may load it. Audit and verify first. |
 | "I can fix this small bug while cleaning up." | Mixing bug fixes with dead code removal creates confusing commit history. |
 | "Tests passed, so deleting this exported helper is safe." | Unit tests may not cover external library consumers or sub-packages. |
+
