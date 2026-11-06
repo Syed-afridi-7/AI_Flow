@@ -1,0 +1,21 @@
+---
+description: AI_Flow engineering standards and skill execution rules
+globs: *
+alwaysApply: true
+---
+
+# AI_Flow Rules for Cursor
+
+When generating code, debugging, auditing, or planning features, adhere to the Agent Skills catalog defined in `skills/`:
+
+1. **Systematic Debugging:**
+   When encountering a bug or error, follow `skills/systematic-debugging/SKILL.md`. Formulate ranked hypotheses and verify the root cause with evidence before modifying code.
+
+2. **Security & Audits:**
+   Follow `skills/security-gap-audit/SKILL.md`. Identify vulnerabilities and deliver findings with file locations and exploit scenarios. Never modify code during the audit phase.
+
+3. **Dead Code Cleanup:**
+   Follow `skills/dead-code-cleanup/SKILL.md`. Produce a confidence-scored audit table first. Never delete code without user approval.
+
+4. **Conventional Commits:**
+   Follow `skills/clean-git-commits/SKILL.md`. Generate atomic, well-typed commits (`feat`, `fix`, `docs`, `refactor`, etc.) with imperative summaries and descriptive bodies.
