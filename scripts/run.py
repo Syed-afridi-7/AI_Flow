@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 AI_Flow Skill Runner — Standalone Auto-Writer
-Run any AI_Flow skill against Gemini, ChatGPT, or Grok APIs and save the output directly to disk.
+Run any AI_Flow skill against Gemini, ChatGPT, Claude, or Grok APIs and save the output directly to disk.
 
 Usage:
   python run.py --skill prd-generator --input "A crypto portfolio tracker"
   python run.py --skill systematic-debugging --input "TypeError: Cannot read properties of undefined" --provider openai
+  python run.py --skill prd-generator --input "A crypto portfolio tracker" --provider anthropic
   python run.py --skill system-architecture --input "Real-time chat app with WebSockets" --provider grok --output architecture_output.md
 
 Setup:
@@ -48,6 +49,10 @@ PROVIDERS = {
     "openai": {
         "env_key": "OPENAI_API_KEY",
         "name": "OpenAI ChatGPT",
+    },
+    "anthropic": {
+        "env_key": "ANTHROPIC_API_KEY",
+        "name": "Anthropic Claude",
     },
     "grok": {
         "env_key": "GROK_API_KEY",
@@ -142,6 +147,35 @@ def call_openai(system_prompt: str, user_prompt: str, api_key: str, model: str =
         sys.exit(1)
 
 
+def call_anthropic(system_prompt: str, user_prompt: str, api_key: str, model: str = "claude-3-7-sonnet-latest") -> str:
+    """Call the Anthropic Claude Messages API."""
+    url = "https://api.anthropic.com/v1/messages"
+    payload = {
+        "model": model,
+        "system": system_prompt,
+        "messages": [
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.7,
+        "max_tokens": 8192,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+    }
+
+    resp = requests.post(url, json=payload, headers=headers, timeout=120)
+    resp.raise_for_status()
+    data = resp.json()
+
+    try:
+        return data["content"][0]["text"]
+    except (KeyError, IndexError):
+        print(f"⚠️  Unexpected Anthropic response:\n{json.dumps(data, indent=2)}")
+        sys.exit(1)
+
+
 def call_grok(system_prompt: str, user_prompt: str, api_key: str, model: str = "grok-3-mini") -> str:
     """Call the xAI Grok API (OpenAI-compatible endpoint)."""
     url = "https://api.x.ai/v1/chat/completions"
@@ -173,6 +207,7 @@ def call_grok(system_prompt: str, user_prompt: str, api_key: str, model: str = "
 CALLERS = {
     "gemini": call_gemini,
     "openai": call_openai,
+    "anthropic": call_anthropic,
     "grok": call_grok,
 }
 
@@ -188,6 +223,7 @@ def detect_provider() -> str:
     print("\n❌ No API key found. Set one in your .env file:")
     print("   GEMINI_API_KEY=your-key-here")
     print("   OPENAI_API_KEY=your-key-here")
+    print("   ANTHROPIC_API_KEY=your-key-here")
     print("   GROK_API_KEY=your-key-here")
     sys.exit(1)
 
@@ -203,6 +239,7 @@ def main():
 Examples:
   python run.py --skill prd-generator --input "A fitness tracker app"
   python run.py --skill systematic-debugging --input "Error: ECONNREFUSED" --provider openai
+  python run.py --skill prd-generator --input "A crypto portfolio tracker" --provider anthropic
   python run.py --skill system-architecture --input "Real-time chat" --provider grok
   python run.py --list
         """,
@@ -314,7 +351,7 @@ Examples:
 
             messages.append({"role": "user", "content": follow_up})
 
-            # For interactive, we call OpenAI-style multi-turn (works for openai & grok)
+            # Multi-turn API dispatch
             if provider == "gemini":
                 # Gemini multi-turn
                 gemini_contents = []
@@ -333,6 +370,29 @@ Examples:
                 resp = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=120)
                 resp.raise_for_status()
                 reply = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+            elif provider == "anthropic":
+                # Anthropic multi-turn
+                anthropic_messages = [
+                    {"role": msg["role"], "content": msg["content"]}
+                    for msg in messages
+                    if msg["role"] in ("user", "assistant")
+                ]
+                url = "https://api.anthropic.com/v1/messages"
+                payload = {
+                    "model": args.model or "claude-3-7-sonnet-latest",
+                    "system": system_prompt,
+                    "messages": anthropic_messages,
+                    "temperature": 0.7,
+                    "max_tokens": 8192,
+                }
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01",
+                }
+                resp = requests.post(url, json=payload, headers=headers, timeout=120)
+                resp.raise_for_status()
+                reply = resp.json()["content"][0]["text"]
             else:
                 # OpenAI / Grok multi-turn
                 base_url = "https://api.openai.com/v1" if provider == "openai" else "https://api.x.ai/v1"

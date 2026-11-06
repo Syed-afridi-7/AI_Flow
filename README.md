@@ -59,7 +59,7 @@ flowchart TD
 ---
 
 ### 2. Standalone Auto-Writer CLI (Generate Files Straight to Disk)
-Don't want to use any agent CLIs? Run our standalone Python auto-writer that calls the **Gemini**, **OpenAI**, or **Grok** APIs directly and saves markdown documents directly to your drive:
+Don't want to use any agent CLIs? Run our standalone Python auto-writer that calls the **Gemini**, **OpenAI**, **Anthropic**, or **Grok** APIs directly and saves markdown documents directly to your drive:
 
 ```bash
 # 1. Install dependencies
@@ -70,6 +70,7 @@ cp .env.example .env
 
 # 3. Run any skill and auto-save the output file
 python scripts/run.py --skill prd-generator --input "A crypto portfolio tracker"
+python scripts/run.py --skill prd-generator --input "A crypto portfolio tracker" --provider anthropic
 python scripts/run.py --skill trd-generator --input "Real-time trading system" --provider gemini
 python scripts/run.py --skill app-flow --input "Multi-step onboarding flow" --provider openai
 python scripts/run.py --skill backend-schema --input "SaaS billing & subscription models" --provider grok
