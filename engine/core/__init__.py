@@ -6,6 +6,8 @@ from engine.core.types import (
     ValidationScorecard,
 )
 from engine.core.base import BaseAgent, BaseGenerator, BaseValidator
+from engine.core.registry import AgentRegistry
+from engine.core.runner import DualAgentRunner
 
 __all__ = [
     "Severity",
@@ -16,4 +18,6 @@ __all__ = [
     "BaseAgent",
     "BaseGenerator",
     "BaseValidator",
+    "AgentRegistry",
+    "DualAgentRunner",
 ]
