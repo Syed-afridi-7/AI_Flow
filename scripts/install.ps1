@@ -55,5 +55,7 @@ foreach ($dest in $Destinations) {
     }
 }
 
-Write-Host "`nInstallation complete! All 10 skills are now available to your AI agents." -ForegroundColor Yellow
+$skillDirs = Get-ChildItem -Path $SourceSkills -Directory
+$totalCount = $skillDirs.Count
+Write-Host "`nInstallation complete! All $totalCount skills are now available to your AI agents." -ForegroundColor Yellow
 

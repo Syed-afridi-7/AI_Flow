@@ -14,6 +14,7 @@ fi
 HOME_DIR="$HOME"
 DESTINATIONS=(
     "$HOME_DIR/.agents/skills"
+    "$HOME_DIR/.gemini/antigravity/skills"
     "$HOME_DIR/.claude/skills"
 )
 
@@ -36,5 +37,6 @@ for dest in "${DESTINATIONS[@]}"; do
 done
 
 echo ""
-echo "Installation complete! All 10 skills are now available to your AI agents."
+TOTAL_SKILLS=$(find "$SOURCE_SKILLS" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+echo "Installation complete! All ${TOTAL_SKILLS} skills are now available to your AI agents."
 
