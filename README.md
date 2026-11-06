@@ -1,88 +1,115 @@
 # 🚀 AI_Flow
 
-> **A systematic, battle-tested prompt framework for end-to-end software development with AI coding assistants.**
+> **A standardized, cross-runtime Agentic Skills suite & prompt framework for all modern AI coding agents.**
 
-[![GitHub repo](https://img.shields.io/badge/Repository-AI__Flow-blue?style=for-the-badge&logo=github)](https://github.com/Syed-afridi-7/AI_Flow)
+[![Agent Skills Specification](https://img.shields.io/badge/Agent_Skills-Open_Standard-8A2BE2?style=for-the-badge&logo=anthropic)](https://agentskills.io)
+[![Antigravity](https://img.shields.io/badge/Antigravity-Compatible-4285F4?style=for-the-badge&logo=google)](https://deepmind.google)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Supported-D97706?style=for-the-badge&logo=anthropic)](https://claude.ai)
+[![Cursor](https://img.shields.io/badge/Cursor-Rules%20Included-000000?style=for-the-badge&logo=cursor)](https://cursor.com)
+[![GitHub Copilot](https://img.shields.io/badge/Copilot-Instructions-black?style=for-the-badge&logo=githubcopilot)](https://github.com/features/copilot)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/Syed-afridi-7/AI_Flow/pulls)
-[![Workflow](https://img.shields.io/badge/Architecture-AI--Assisted%20Engineering-orange?style=for-the-badge)](./)
 
 ---
 
 ## 📌 Overview
 
-**AI_Flow** transforms chaotic prompt interactions into a disciplined, structured engineering pipeline. Whether you pair with **Antigravity**, **Cursor**, **Claude**, or **Copilot**, these templates enforce industry-standard rigor across product specification, UI/UX architecture, end-to-end testing, security audits, and clean version control.
+**AI_Flow** transforms chaotic prompt interactions into disciplined, production-grade engineering workflows. Compliant with the [Agent Skills Open Specification](https://agentskills.io), it equips your AI pair programmers (**Google Antigravity**, **Claude Code**, **Cursor**, **GitHub Copilot**, **Windsurf**, and **Codex**) with executable, self-contained skills covering every stage of the software lifecycle.
 
-Stop shotgun debugging and hallucinated requirements. Build production-grade software systematically.
+No hallucinated requirements. No premature fixes. No broken git commits.
 
 ---
 
 ## 🔄 The AI_Flow Lifecycle
 
 ```mermaid
-flowchart LR
-    A[1. PRD.md<br/><b>Requirements</b>] --> B[2. UIUX_Design.md<br/><b>Design Brief</b>]
-    B --> C[3. TaskToSkill.md<br/><b>Skill Modularization</b>]
-    C --> D[4. PlayWright.md<br/><b>E2E Testing</b>]
-    D --> E[5. Debug.md<br/><b>Root-Cause Debugging</b>]
-    E --> F[6. SecGap.md<br/><b>Security Audit</b>]
-    F --> G[7. DeadCode.md<br/><b>Refactor & Cleanup</b>]
-    G --> H[8. GIT.md<br/><b>Atomic Commits</b>]
+flowchart TD
+    subgraph Phase 1: Product & Architecture
+        A["1. prd-generator<br/><b>Clarification & Scope</b>"] --> B["2. uiux-design-brief<br/><b>Design Tokens & States</b>"]
+        B --> C["3. system-architecture<br/><b>Topology & Contracts</b>"]
+    end
+
+    subgraph Phase 2: Execution & Quality
+        C --> D["4. task-to-skill<br/><b>Skill Modularization</b>"]
+        D --> E["5. playwright-e2e-testing<br/><b>E2E Testing Suite</b>"]
+        E --> F["6. systematic-debugging<br/><b>5-Step Root-Cause Analysis</b>"]
+    end
+
+    subgraph Phase 3: Auditing & Release
+        F --> G["7. security-gap-audit<br/><b>Pre-Launch Threat Audit</b>"]
+        G --> H["8. dead-code-cleanup<br/><b>Two-Phase Safe Pruning</b>"]
+        H --> I["9. rigorous-code-review<br/><b>Blocker & Regression Review</b>"]
+        I --> J["10. clean-git-commits<br/><b>Atomic Conventional Commits</b>"]
+    end
 ```
 
 ---
 
-## 📂 Framework Directory
+## ⚡ Quick Start: Install Skills
 
-| File | Phase | Role / Description |
-| :--- | :--- | :--- |
-| [**`PRD.md`**](file:///e:/Instructions/PRD.md) | **Product Definition** | Senior PM prompt to elicit constraints, user personas, MVP/v2 scope, data model sketches, and success metrics before coding. |
-| [**`UIUX_Design.md`**](file:///e:/Instructions/UIUX_Design.md) | **UI/UX Architecture** | Senior Designer brief delivering design principles, tokens (colors, typography, spacing), component states, and accessibility guidelines. |
-| [**`TaskToSkill.md`**](file:///e:/Instructions/TaskToSkill.md) | **Agent Memory & Skills** | Converts one-off successful engineering workflows into modular, reusable Agent Skills with triggers, instructions, and failure modes. |
-| [**`PlayWright.md`**](file:///e:/Instructions/PlayWright.md) | **Quality Assurance** | End-to-end Playwright setup covering critical journeys, auth fixtures, data seeding, resilient locators, and CI integration. |
-| [**`Debug.md`**](file:///e:/Instructions/Debug.md) | **Diagnostics** | 5-step disciplined debugging protocol: Restate &rarr; Hypothesize root causes &rarr; Isolate & verify &rarr; Apply minimal fix. |
-| [**`SecGap.md`**](file:///e:/Instructions/SecGap.md) | **Security Audit** | Pre-launch security audit scanning for auth flaws, IDOR, injection vectors, hardcoded secrets, CORS issues, and OWASP Top 10 vulnerabilities. |
-| [**`DeadCode.md`**](file:///e:/Instructions/DeadCode.md) | **Code Cleanup** | Two-phase refactor protocol (Audit &rarr; Execute) to eliminate unused routes, unreferenced imports, and duplicated logic safely. |
-| [**`GIT.md`**](file:///e:/Instructions/GIT.md) | **Version Control** | Conventional Commits standard organizer enforcing atomic changes, clear intent, and reviewer-friendly commit messages. |
+Install all 10 skills directly into your global agent environment with a single command:
 
----
+### Windows (PowerShell)
+```powershell
+.\scripts\install.ps1
+```
+*(Optionally pass `-Symlink` to create live development symlinks).*
 
-## 🛠️ How to Use
+### macOS / Linux (Bash)
+```bash
+chmod +x ./scripts/install.sh && ./scripts/install.sh
+```
 
-### 1. Step-by-Step Execution
-Feed each template into your AI coding agent as you advance through the product development lifecycle:
-
-1. **Ideation**: Open [`PRD.md`](PRD.md), substitute your `[DESCRIBE YOUR IDEA]` placeholder, and let the model interview you before writing specifications.
-2. **Interface Planning**: Paste [`UIUX_Design.md`](UIUX_Design.md) alongside the generated PRD to establish design tokens and component contracts before touching code.
-3. **Implementation**: Break down features into modular tasks. Use [`TaskToSkill.md`](TaskToSkill.md) whenever a repeatable pattern emerges.
-4. **Verification**: Deploy [`PlayWright.md`](PlayWright.md) to generate robust automated end-to-end test suites.
-5. **Troubleshooting**: When an error occurs, paste [`Debug.md`](Debug.md) with error logs to prevent the model from refactoring unrelated code.
-6. **Hardening**: Run [`SecGap.md`](SecGap.md) and [`DeadCode.md`](DeadCode.md) prior to production deployment or merging.
-7. **Release**: Organize staged and unstaged work into atomic commits using [`GIT.md`](GIT.md).
+This registers the skills with:
+- **`~/.agents/skills/`** (Cross-runtime standard)
+- **`~/.gemini/antigravity/skills/`** (Google Antigravity)
+- **`~/.claude/skills/`** (Anthropic Claude Code)
 
 ---
 
-## 💡 Core Principles
+## 📂 Skills Catalog & Reference
 
-- **No Premature Fixes:** Debugging requires isolating the root cause before writing a single line of replacement code.
-- **Explicit Over Implied:** Requirements and edge cases must be clarified upfront through guided agent questions.
-- **Two-Phase Modifications:** Audits (Dead Code, Security) must produce a reviewed report before any automated execution or file deletions occur.
-- **Atomic History:** Commits must be self-contained, typed according to Conventional Commits, and pass builds independently.
+All skills follow the official `skills/<skill-name>/SKILL.md` format and are paired with standalone root prompt templates for manual use:
+
+| Skill | Canonical Spec | Standalone Prompt | Triggering Condition |
+| :--- | :--- | :--- | :--- |
+| **`prd-generator`** | [`skills/prd-generator/SKILL.md`](skills/prd-generator/SKILL.md) | [`PRD.md`](PRD.md) | Initiating a new product, defining scope, or translating an unformed idea into a structured specification before coding. |
+| **`uiux-design-brief`** | [`skills/uiux-design-brief/SKILL.md`](skills/uiux-design-brief/SKILL.md) | [`UIUX_Design.md`](UIUX_Design.md) | Translating requirements into UI/UX architecture, tokens, screen flows, or component contracts before frontend work. |
+| **`system-architecture`** | [`skills/system-architecture/SKILL.md`](skills/system-architecture/SKILL.md) | [`Architecture.md`](Architecture.md) | Architecting systems, selecting tech stacks, designing database schemas, or defining API contracts. |
+| **`task-to-skill`** | [`skills/task-to-skill/SKILL.md`](skills/task-to-skill/SKILL.md) | [`TaskToSkill.md`](TaskToSkill.md) | Turning a completed engineering task or workflow into a permanent, reusable Agent Skill. |
+| **`playwright-e2e-testing`** | [`skills/playwright-e2e-testing/SKILL.md`](skills/playwright-e2e-testing/SKILL.md) | [`PlayWright.md`](PlayWright.md) | Configuring Playwright, mapping user journeys, or writing resilient browser tests. |
+| **`systematic-debugging`** | [`skills/systematic-debugging/SKILL.md`](skills/systematic-debugging/SKILL.md) | [`Debug.md`](Debug.md) | Investigating bugs, runtime errors, or failing tests using a strict 5-step hypothesis and proof protocol. |
+| **`security-gap-audit`** | [`skills/security-gap-audit/SKILL.md`](skills/security-gap-audit/SKILL.md) | [`SecGap.md`](SecGap.md) | Conducting pre-launch security reviews, vulnerability scans, threat modeling, or checking for secrets leaks. |
+| **`dead-code-cleanup`** | [`skills/dead-code-cleanup/SKILL.md`](skills/dead-code-cleanup/SKILL.md) | [`DeadCode.md`](DeadCode.md) | Safely pruning unused files, obsolete dependencies, dead imports, or duplicate logic (Audit &rarr; Approve &rarr; Execute). |
+| **`rigorous-code-review`** | [`skills/rigorous-code-review/SKILL.md`](skills/rigorous-code-review/SKILL.md) | [`CodeReview.md`](CodeReview.md) | Reviewing pull requests and code diffs for logic bugs, performance regressions, and contract breaks. |
+| **`clean-git-commits`** | [`skills/clean-git-commits/SKILL.md`](skills/clean-git-commits/SKILL.md) | [`GIT.md`](GIT.md) | Splitting work into atomic commits formatted according to Conventional Commits. |
+
+---
+
+## 🤖 Cross-Runtime Configuration Adapters
+
+This repository includes native configuration adapters out of the box:
+
+- **[AGENTS.md](AGENTS.md):** Universal agent instructions recognized by all modern agents.
+- **[CLAUDE.md](CLAUDE.md):** Memory context and skill mappings for Claude Code.
+- **[.cursor/rules/](.cursor/rules/ai-flow.mdc):** Cursor IDE workspace rules applying skills during active editor sessions.
+- **[.github/copilot-instructions.md](.github/copilot-instructions.md):** Repository-level instructions for GitHub Copilot Chat & Workspace.
+
+---
+
+## 💡 Core Philosophy
+
+- **Two-Phase Enforcement:** High-risk tasks (debugging, dead code removal, security audits) enforce an **Audit / Verify First** stop before modifying production code.
+- **Zero Hallucination:** Agents are mandated to ask clarifying questions rather than guessing ambiguous business logic.
+- **Atomic Verifiability:** Every git commit must build, pass tests, and state the technical rationale behind the change.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, additional workflow templates, and improvements are warmly welcome!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/NewTemplate`)
-3. Commit your Changes (`git commit -m 'docs: add new API contract template'`)
-4. Push to the Branch (`git push origin feature/NewTemplate`)
-5. Open a Pull Request
+Contributions of new skills and improvements are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for skill authoring standards.
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](LICENSE) for details.
