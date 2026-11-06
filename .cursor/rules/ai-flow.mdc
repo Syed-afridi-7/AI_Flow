@@ -6,23 +6,67 @@ alwaysApply: true
 
 # AI_Flow Rules for Cursor
 
-When generating code, debugging, auditing, or planning features, adhere to the Agent Skills catalog defined in `skills/`:
+When designing, implementing, debugging, auditing, or planning features, adhere strictly to the **AI_Flow** Agent Skills framework defined in `skills/`. Every software engineering activity corresponds to one of the 14 standardized skills across three lifecycle phases:
 
-1. **Product, Tech Requirements & Schema:**
-   - Follow `skills/prd-generator/SKILL.md` for PRDs.
-   - Follow `skills/trd-generator/SKILL.md` for TRDs, latency budgets, and SLAs.
-   - Follow `skills/app-flow/SKILL.md` for navigational state machines.
-   - Follow `skills/backend-schema/SKILL.md` for DDL, cascade rules, and indexes.
-   - Follow `skills/implementation-plan/SKILL.md` for phased task roadmaps.
+---
 
-2. **Systematic Debugging:**
-   When encountering a bug or error, follow `skills/systematic-debugging/SKILL.md`. Formulate ranked hypotheses and verify the root cause with evidence before modifying code.
+## 🏗️ Phase 1: Product, Requirements & Architecture
 
-3. **Security & Audits:**
-   Follow `skills/security-gap-audit/SKILL.md`. Identify vulnerabilities and deliver findings with file locations and exploit scenarios. Never modify code during the audit phase.
+Before writing production code, establish clear specifications, architectural boundaries, and contracts:
 
-4. **Dead Code Cleanup:**
-   Follow `skills/dead-code-cleanup/SKILL.md`. Produce a confidence-scored audit table first. Never delete code without user approval.
+1. **`skills/prd-generator/SKILL.md` (PRD Generation):**
+   - Use when defining scope, clarifying requirements, or drafting a Product Requirements Document (PRD).
+   - Conduct structured persona discovery, establish measurable success metrics, and strictly demarcate MVP vs. post-MVP scope.
+2. **`skills/trd-generator/SKILL.md` (Technical Requirements):**
+   - Use when defining non-functional requirements (NFRs), throughput targets (RPS), p95/p99 latency budgets, uptime SLAs, and operational constraints.
+3. **`skills/app-flow/SKILL.md` (Application Flow & Navigation):**
+   - Use when mapping user navigation journeys, screen-to-screen transitions, permission gates, and navigational state machines.
+4. **`skills/uiux-design-brief/SKILL.md` (UI/UX Design Architecture):**
+   - Use when translating product requirements into UI/UX architecture, visual tokens (hex/8px grid), screen layouts, accessibility standards (WCAG AA), and the 5 screen states (loading, empty, populated, error, partial).
+5. **`skills/backend-schema/SKILL.md` (Database Schema Design):**
+   - Use when modeling database entities, generating Mermaid ERD diagrams, authoring strict SQL DDL migrations, setting foreign key cascade rules, and designing composite indexes for query performance.
+6. **`skills/system-architecture/SKILL.md` (System Architecture):**
+   - Use when architecting distributed or modular systems, producing topology diagrams, defining service boundaries, establishing API contracts, and evaluating scalability/resilience trade-offs.
+7. **`skills/implementation-plan/SKILL.md` (Implementation Planning):**
+   - Use when breaking down features into dependency-ordered engineering roadmaps with phased tasks, specific file paths, and verifiable test checkpoints.
 
-5. **Conventional Commits:**
-   Follow `skills/clean-git-commits/SKILL.md`. Generate atomic, well-typed commits (`feat`, `fix`, `docs`, `refactor`, etc.) with imperative summaries and descriptive bodies.
+---
+
+## ⚡ Phase 2: Execution & Quality
+
+When authoring features, testing, or diagnosing issues, follow disciplined execution patterns:
+
+8. **`skills/task-to-skill/SKILL.md` (Task to Skill Extraction):**
+   - Use when converting repeatable engineering workflows, complex multi-step processes, or domain solutions into permanent, reusable Agent Skills adhering to the Agent Skills specification.
+9. **`skills/playwright-e2e-testing/SKILL.md` (Browser & E2E Testing):**
+   - Use when setting up automated end-to-end browser tests using Playwright. Favor accessible role-based selectors (`getByRole`), robust auth fixtures (`storageState`), and hermetic test isolation.
+10. **`skills/systematic-debugging/SKILL.md` (Systematic Debugging):**
+    - Use when investigating runtime errors, test failures, or unexpected behaviors.
+    - **Never shotgun debug:** Strictly adhere to the 5-step protocol (Restate problem &rarr; Formulate 3 ranked hypotheses &rarr; Instrument & probe &rarr; Validate evidence &rarr; Apply minimal atomic fix).
+
+---
+
+## 🔍 Phase 3: Auditing & Release
+
+Before merging code, pruning assets, or shipping changes, apply rigorous safeguards:
+
+11. **`skills/security-gap-audit/SKILL.md` (Security Gap Audit):**
+    - Use when conducting pre-launch security audits and vulnerability assessments across the top 10 attack vectors (auth bypass, IDOR, SQL injection, secret leakage, CORS, SSRF, etc.).
+    - Deliver read-only reports with file paths and exploit scenarios. Never modify production code during the audit phase.
+12. **`skills/dead-code-cleanup/SKILL.md` (Dead Code Pruning):**
+    - Use when pruning unused files, dead imports, obsolete dependencies, or abandoned endpoints.
+    - Execute a two-phase cleanup: produce a confidence-scored audit table (>90% confidence threshold) and wait for explicit confirmation before deleting files.
+13. **`skills/rigorous-code-review/SKILL.md` (Rigorous Code Review):**
+    - Use when reviewing pull requests, git diffs, or staged modifications.
+    - Conduct a two-stage evaluation: first assess correctness, regressions, and security blockers with production failure scenarios; then provide actionable, prioritized improvements.
+14. **`skills/clean-git-commits/SKILL.md` (Clean Git Commits):**
+    - Use when staging git changes and organizing commits.
+    - Split work into atomic, independently compilable commits adhering strictly to the Conventional Commits specification (`feat`, `fix`, `docs`, `refactor`, etc.) with clear rationale.
+
+---
+
+## 🛡️ Core Operating Principles
+
+- **Dependency-First Progression:** PRD &rarr; TRD &rarr; App Flow & UI/UX &rarr; Backend Schema & System Architecture &rarr; Implementation Plan &rarr; Execution & Testing &rarr; Audit & Review &rarr; Clean Commits.
+- **Two-Phase Action Protocol:** For audits, dead code elimination, and security remediations, present findings and require explicit confirmation prior to altering the codebase.
+- **Zero Hallucinated Requirements:** Clarify ambiguous business rules or architectural constraints before proceeding with specifications or implementation.
