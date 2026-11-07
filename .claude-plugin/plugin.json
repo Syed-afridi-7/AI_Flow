@@ -1,12 +1,14 @@
 {
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "ai-flow",
   "version": "1.0.0",
   "description": "Production-grade framework of 30 standardized Agentic Skills and 60 dual-agent personas with from-scratch pure Python Hybrid Neuro-Symbolic AI engine.",
   "author": {
     "name": "Syed Afridi",
-    "url": "https://github.com/syedafridi"
+    "url": "https://github.com/Syed-afridi-7"
   },
-  "repository": "https://github.com/syedafridi/AI_Flow",
+  "homepage": "https://github.com/Syed-afridi-7/AI_Flow",
+  "repository": "https://github.com/Syed-afridi-7/AI_Flow",
   "license": "MIT",
   "keywords": [
     "ai-agents",
@@ -17,7 +19,9 @@
     "code-review",
     "prd",
     "trd",
-    "security-audit"
+    "security-audit",
+    "devops",
+    "claude-code"
   ],
   "skills": "./skills"
 }
