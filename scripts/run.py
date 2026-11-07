@@ -43,6 +43,8 @@ import requests
 # ---------------------------------------------------------------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 SKILLS_DIR = REPO_ROOT / "skills"
 OUTPUT_DIR = REPO_ROOT / "output"
 
@@ -401,9 +403,9 @@ Examples:
     parser.add_argument("--provider", "-p", choices=list(PROVIDERS.keys()), help="AI provider (auto-detected from .env if omitted)")
     parser.add_argument(
         "--mode",
-        choices=["single", "dual"],
-        default="single",
-        help="Execution mode: single (fast 1-turn) or dual (autonomous generator + validator feedback loop)",
+        choices=["single", "dual", "local"],
+        default="local",
+        help="Execution mode: local (pure Python engine, zero API keys), single (cloud 1-turn), or dual (cloud peer review)",
     )
     parser.add_argument("--model", "-m", help="Override the default model for single mode, or apply to both agents in dual mode")
     parser.add_argument(
@@ -448,6 +450,44 @@ Examples:
     skill_dir = resolve_skill_dir(args.skill)
     skill_name = skill_dir.name
     skill_content = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+
+    # -----------------------------------------------------------------------
+    # Local Offline Mode (Pure Python Engine, Zero API Keys)
+    # -----------------------------------------------------------------------
+    if args.mode == "local":
+        try:
+            import engine.agents
+            from engine.core.runner import DualAgentRunner
+        except ImportError as e:
+            print(f"\n❌ Error loading pure Python engine: {e}")
+            sys.exit(1)
+
+        runner = DualAgentRunner(max_refinements=2)
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+        print(f"\n🚀 Running skill in 100% OFFLINE LOCAL mode: {skill_name}")
+        print(f"⚡ Pure Python Dual-Agent Engine (Zero Cloud APIs / Zero Keys)")
+        print(f"📝 Input: {args.input[:100]}{'...' if len(args.input) > 100 else ''}\n")
+
+        result, scorecard = runner.run_skill(
+            skill_name=skill_name,
+            prompt=args.input,
+            mode="dual"
+        )
+
+        out_path = Path(args.output) if args.output else OUTPUT_DIR / f"{skill_name}_{timestamp}.md"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(result.content, encoding="utf-8")
+
+        print(f"{'─' * 60}")
+        print(result.content)
+        print(f"{'─' * 60}")
+        print(f"\n✅ Output saved to: {out_path}")
+        print(f"📊 Scorecard: {scorecard.score}/100 ({'PASSED' if scorecard.passed else 'FAILED'}) - Iterations: {scorecard.iteration}")
+        if scorecard.audit_summary:
+            print(f"🔍 Verdict: {scorecard.audit_summary}")
+        return
 
     # Resolve provider
     provider = args.provider or detect_provider()

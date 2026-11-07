@@ -333,6 +333,8 @@ def check_file_queue(dry_run: bool = False) -> int:
                 prompt_content,
                 "--output",
                 str(out_file),
+                "--mode",
+                "local",
             ]
 
             proc = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
