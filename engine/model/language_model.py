@@ -51,17 +51,26 @@ class MarkovLanguageModel:
         self.unigram_counts: Counter[str] = Counter()
         self.transitions: dict[tuple[str, ...], Counter[str]] = {}
         self.vocab: set[str] = set(self.tokenizer.token_to_id.keys())
+        self._sorted_vocab: list[str] | None = None
 
     @property
     def vocab_size(self) -> int:
         """Total number of unique tokens registered in the model vocabulary."""
         return len(self.vocab)
 
+    @property
+    def sorted_vocab(self) -> list[str]:
+        """Pre-sorted list of vocabulary tokens for deterministic fast access."""
+        if self._sorted_vocab is None or len(self._sorted_vocab) != len(self.vocab):
+            self._sorted_vocab = sorted(self.vocab)
+        return self._sorted_vocab
+
     def reset(self) -> None:
         """Clear all learned counts and transitions while preserving vocabulary."""
         self.unigram_counts.clear()
         self.transitions.clear()
         self.vocab = set(self.tokenizer.token_to_id.keys())
+        self._sorted_vocab = None
 
     def train(self, corpus: list[str]) -> None:
         """Train language model on a collection of text documents.
@@ -112,6 +121,8 @@ class MarkovLanguageModel:
                     if ctx not in self.transitions:
                         self.transitions[ctx] = Counter()
                     self.transitions[ctx][target] += 1
+
+        self._sorted_vocab = sorted(self.vocab)
 
     def train_on_directory(
         self,
@@ -240,14 +251,14 @@ class MarkovLanguageModel:
 
         # Select candidate tokens fast without scanning all vocabulary when top_k is small
         if top_k is None or top_k <= 0 or top_k >= vocab_size:
-            candidates = list(self.vocab)
+            candidates = self.sorted_vocab
         else:
             seen_tokens = [tok for tok, _ in counts.most_common(top_k)]
             if len(seen_tokens) < top_k:
                 seen_set = set(seen_tokens)
                 needed = top_k - len(seen_tokens)
                 unseen: list[str] = []
-                for tok in self.vocab:
+                for tok in self.sorted_vocab:
                     if tok not in seen_set:
                         unseen.append(tok)
                         if len(unseen) == needed:
@@ -261,8 +272,11 @@ class MarkovLanguageModel:
 
         # Greedy argmax mode for near-zero temperature
         if temperature <= 1e-5:
-            best_token = max(candidates, key=lambda w: (counts.get(w, 0), w))
-            return {w: 1.0 if w == best_token else 0.0 for w in candidates}
+            best_token = min(candidates, key=lambda w: (-counts.get(w, 0), w))
+            pairs = [(w, 1.0 if w == best_token else 0.0) for w in candidates]
+            pairs.sort(key=lambda x: (-x[1], x[0]))
+            limit = top_k if (top_k is not None and top_k > 0) else len(pairs)
+            return {w: weight for w, weight in pairs[:limit]}
 
         # Temperature scaling
         # (counts[w] + alpha) / denom raised to (1/T) normalized over candidates
@@ -271,17 +285,20 @@ class MarkovLanguageModel:
         else:
             inv_t = 1.0 / temperature
             # Scale by max_c to avoid overflow/underflow
-            max_c = (counts[candidates[0]] if candidates[0] in counts else 0) + alpha
+            max_c = max((counts.get(w, 0) for w in candidates), default=0) + alpha
             if max_c <= 0:
                 max_c = 1.0
             weights = [((counts.get(w, 0) + alpha) / max_c) ** inv_t for w in candidates]
 
-        total_weight = sum(weights)
+        pairs = sorted(zip(candidates, weights), key=lambda x: (-x[1], x[0]))
+        limit = top_k if (top_k is not None and top_k > 0) else len(pairs)
+        selected_pairs = pairs[:limit]
+        total_weight = sum(w for _, w in selected_pairs)
         if total_weight <= 0.0:
-            uniform_p = 1.0 / len(candidates)
-            return {w: uniform_p for w in candidates}
+            uniform_p = 1.0 / len(selected_pairs)
+            return {w: uniform_p for w, _ in selected_pairs}
 
-        return {w: weight / total_weight for w, weight in zip(candidates, weights)}
+        return {w: weight / total_weight for w, weight in selected_pairs}
 
     def sample_next_token(
         self,
@@ -312,12 +329,12 @@ class MarkovLanguageModel:
         if temperature <= 1e-5:
             return max(probs, key=lambda k: probs[k])
 
-        # Candidates are already sorted descending by count/probability
+        sorted_candidates = sorted(probs.items(), key=lambda kv: (-kv[1], kv[0]))
         nucleus_tokens: list[str] = []
         nucleus_weights: list[float] = []
         cumulative_prob = 0.0
 
-        for tok, p in probs.items():
+        for tok, p in sorted_candidates:
             nucleus_tokens.append(tok)
             nucleus_weights.append(p)
             cumulative_prob += p
@@ -436,6 +453,7 @@ class MarkovLanguageModel:
         else:
             lm.vocab = set(lm.tokenizer.token_to_id.keys())
 
+        lm._sorted_vocab = sorted(lm.vocab)
         return lm
 
     def save(self, path: str | Path) -> None:
