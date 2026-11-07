@@ -9,6 +9,7 @@ from engine.core.base import BaseAgent, BaseGenerator, BaseValidator
 from engine.core.registry import AgentRegistry
 from engine.core.runner import DualAgentRunner
 from engine.core.task_manager import TaskManager, TaskRecord
+from engine.core.dispatcher import AgentDispatcher
 
 __all__ = [
     "Severity",
@@ -23,4 +24,5 @@ __all__ = [
     "DualAgentRunner",
     "TaskManager",
     "TaskRecord",
+    "AgentDispatcher",
 ]
