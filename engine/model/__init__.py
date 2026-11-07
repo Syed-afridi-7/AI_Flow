@@ -7,6 +7,7 @@ Provides from-scratch, pure Python standard library components:
 - NeuroSymbolicSynthesizer: Dynamic context-aware generation engine.
 """
 
+from engine.model.language_model import MarkovLanguageModel
 from engine.model.tokenizer import CustomTokenizer
 from engine.model.vector_memory import MemoryMatch, VectorMemory
 
@@ -17,11 +18,6 @@ __all__ = [
     "MarkovLanguageModel",
     "NeuroSymbolicSynthesizer",
 ]
-
-try:
-    from engine.model.language_model import MarkovLanguageModel  # type: ignore
-except ImportError:
-    MarkovLanguageModel = None  # type: ignore
 
 try:
     from engine.model.synthesizer import NeuroSymbolicSynthesizer  # type: ignore
