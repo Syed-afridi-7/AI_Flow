@@ -513,6 +513,59 @@ Examples:
     parser.add_argument("--list", "-l", action="store_true", help="List all available skills and exit")
     parser.add_argument("--interactive", action="store_true", help="Enter interactive multi-turn mode (for skills with approval stops)")
 
+    # Background task management arguments
+    parser.add_argument(
+        "--background",
+        "-bg",
+        action="store_true",
+        help="Dispatch task to run in the background without blocking",
+    )
+    parser.add_argument(
+        "--status",
+        type=str,
+        metavar="TASK_ID",
+        help="Check status of a background task",
+    )
+    parser.add_argument(
+        "--list-tasks",
+        action="store_true",
+        help="List background tasks and their statuses",
+    )
+    parser.add_argument(
+        "--logs",
+        type=str,
+        metavar="TASK_ID",
+        help="View logs of a background task",
+    )
+    parser.add_argument(
+        "--tail",
+        type=int,
+        default=50,
+        help="Number of trailing log lines to view (default: 50)",
+    )
+    parser.add_argument(
+        "--cancel",
+        type=str,
+        metavar="TASK_ID",
+        help="Cancel a running background task",
+    )
+    parser.add_argument(
+        "--prune-tasks",
+        action="store_true",
+        help="Prune historical tasks older than threshold days",
+    )
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=7,
+        help="Threshold days for pruning tasks (default: 7)",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output result as structured JSON to stdout",
+    )
+
     args = parser.parse_args()
 
     # List mode
@@ -533,6 +586,108 @@ Examples:
         print(f"\nUsage: python run.py --skill <name> --input \"<your prompt>\" [--mode dual]")
         return
 
+    # Background task management commands
+    if args.list_tasks:
+        from engine.core.dispatcher import AgentDispatcher
+        dispatcher = AgentDispatcher()
+        tasks = dispatcher.list_tasks()
+        if getattr(args, "json", False):
+            print(json.dumps([t.to_dict() for t in tasks], indent=2))
+        else:
+            print(f"\n📂 Background Tasks ({len(tasks)} Total):\n")
+            if not tasks:
+                print("  No background tasks found.\n")
+            else:
+                header = f"  {'TASK ID':<24} {'SKILL':<26} {'STATUS':<12} {'PID':<8} {'SCORE':<7} {'STARTED AT':<20}"
+                print(header)
+                print("  " + "─" * 100)
+                for t in tasks:
+                    pid_str = str(t.pid) if t.pid else "-"
+                    score_str = f"{t.score}/100" if t.score is not None else "-"
+                    started_str = (t.started_at[:19] if t.started_at else "-")
+                    print(f"  {t.task_id:<24} {t.skill_name:<26} {t.status.upper():<12} {pid_str:<8} {score_str:<7} {started_str:<20}")
+                print()
+        sys.exit(0)
+
+    if args.status:
+        from engine.core.dispatcher import AgentDispatcher
+        dispatcher = AgentDispatcher()
+        record = dispatcher.get_status(args.status)
+        if record is None:
+            if getattr(args, "json", False):
+                print(json.dumps({"error": f"Task '{args.status}' not found", "task_id": args.status}, indent=2))
+            else:
+                print(f"\n❌ Error: Task '{args.status}' not found.\n")
+            sys.exit(1)
+
+        if getattr(args, "json", False):
+            print(json.dumps(record.to_dict(), indent=2))
+        else:
+            print(f"\n📋 Task Status: {record.task_id}")
+            print(f"  • Skill:         {record.skill_name}")
+            print(f"  • Status:        {record.status.upper()}")
+            print(f"  • Mode:          {record.mode}")
+            print(f"  • Provider:      {record.provider}")
+            print(f"  • PID:           {record.pid or 'N/A'}")
+            print(f"  • Started At:    {record.started_at or 'N/A'}")
+            print(f"  • Completed At:  {record.completed_at or 'N/A'}")
+            if record.score is not None:
+                print(f"  • Score:         {record.score}/100 ({record.verdict or 'N/A'})")
+            if record.exit_code is not None:
+                print(f"  • Exit Code:     {record.exit_code}")
+            if record.output_file:
+                print(f"  • Output File:   {record.output_file}")
+            if record.log_file:
+                print(f"  • Log File:      {record.log_file}")
+            if record.error_message:
+                print(f"  • Error:         {record.error_message}")
+            print()
+        sys.exit(0)
+
+    if args.logs:
+        from engine.core.dispatcher import AgentDispatcher
+        dispatcher = AgentDispatcher()
+        logs = dispatcher.get_logs(args.logs, tail=args.tail)
+        if getattr(args, "json", False):
+            print(json.dumps({"task_id": args.logs, "tail": args.tail, "logs": logs}, indent=2))
+        else:
+            if logs:
+                print(logs, end="" if logs.endswith("\n") else "\n")
+            else:
+                print(f"(No logs found for task '{args.logs}')")
+        sys.exit(0)
+
+    if args.cancel:
+        from engine.core.dispatcher import AgentDispatcher
+        dispatcher = AgentDispatcher()
+        record = dispatcher.task_manager.get_task(args.cancel)
+        if record is None:
+            if getattr(args, "json", False):
+                print(json.dumps({"task_id": args.cancel, "cancelled": False, "error": f"Task '{args.cancel}' not found"}, indent=2))
+            else:
+                print(f"\n❌ Error: Task '{args.cancel}' not found.\n")
+            sys.exit(1)
+
+        success = dispatcher.cancel_task(args.cancel)
+        if getattr(args, "json", False):
+            print(json.dumps({"task_id": args.cancel, "cancelled": success, "status": "cancelled" if success else record.status}, indent=2))
+        else:
+            if success:
+                print(f"\n✅ Task '{args.cancel}' cancelled successfully.\n")
+            else:
+                print(f"\n⚠️ Task '{args.cancel}' could not be cancelled (already in {record.status} state).\n")
+        sys.exit(0)
+
+    if getattr(args, "prune_tasks", False):
+        from engine.core.dispatcher import AgentDispatcher
+        dispatcher = AgentDispatcher()
+        pruned = dispatcher.prune_tasks(older_than_days=args.days)
+        if getattr(args, "json", False):
+            print(json.dumps({"pruned_count": pruned, "older_than_days": args.days}, indent=2))
+        else:
+            print(f"\n✅ Pruned {pruned} task(s) older than {args.days} days.\n")
+        sys.exit(0)
+
     # Validate required args
     if not args.skill:
         parser.error("--skill is required (or use --list to see available skills)")
@@ -548,6 +703,56 @@ Examples:
     skill_dir = resolve_skill_dir(args.skill)
     skill_name = skill_dir.name
     skill_content = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+
+    # Background Dispatch
+    if args.background:
+        from engine.core.dispatcher import AgentDispatcher
+        prompt_text = args.input or ""
+        if prompt_text and Path(prompt_text).is_file():
+            try:
+                prompt_text = Path(prompt_text).read_text(encoding="utf-8")
+            except Exception:
+                pass
+
+        provider = args.provider or "local"
+        mode = "single" if args.mode == "single" else "dual"
+
+        dispatcher = AgentDispatcher()
+        record = dispatcher.dispatch(
+            skill_name=skill_name,
+            input_text=prompt_text,
+            mode=mode,
+            provider=provider,
+            output_dir=args.output if args.output else None,
+        )
+
+        if getattr(args, "json", False):
+            print(json.dumps({
+                "status": "dispatched",
+                "task_id": record.task_id,
+                "pid": record.pid,
+                "skill": record.skill_name,
+                "mode": record.mode,
+                "provider": record.provider,
+                "log_file": record.log_file,
+            }, indent=2))
+        else:
+            print(f"\n{'=' * 70}")
+            print(f"  🚀 AI_FLOW BACKGROUND AGENT DISPATCHED")
+            print(f"{'=' * 70}")
+            print(f"  • Task ID:    {record.task_id}")
+            print(f"  • Worker PID: {record.pid or 'N/A'}")
+            print(f"  • Skill:      {record.skill_name}")
+            print(f"  • Mode:       {record.mode.upper()}")
+            print(f"  • Provider:   {record.provider}")
+            if record.log_file:
+                print(f"  • Log File:   {record.log_file}")
+            print(f"\nCheck status:")
+            print(f"  python scripts/run.py --status {record.task_id}")
+            print(f"View logs:")
+            print(f"  python scripts/run.py --logs {record.task_id}")
+            print(f"{'=' * 70}\n")
+        sys.exit(0)
 
     # -----------------------------------------------------------------------
     # Local Offline Mode (Pure Python Engine, Zero API Keys)
