@@ -35,8 +35,13 @@ class MockValidator(BaseValidator):
 
 class TestRunnerAndRegistry(unittest.TestCase):
     def setUp(self):
+        self._saved_registry = dict(AgentRegistry._registry)
         AgentRegistry.clear()
         AgentRegistry.register("mock-skill", MockGenerator, MockValidator)
+
+    def tearDown(self):
+        AgentRegistry._registry.clear()
+        AgentRegistry._registry.update(self._saved_registry)
 
     def test_registry_registration(self):
         self.assertIn("mock-skill", AgentRegistry.list_skills())
