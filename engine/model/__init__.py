@@ -8,6 +8,7 @@ Provides from-scratch, pure Python standard library components:
 """
 
 from engine.model.language_model import MarkovLanguageModel
+from engine.model.synthesizer import NeuroSymbolicSynthesizer
 from engine.model.tokenizer import CustomTokenizer
 from engine.model.vector_memory import MemoryMatch, VectorMemory
 
@@ -18,8 +19,3 @@ __all__ = [
     "MarkovLanguageModel",
     "NeuroSymbolicSynthesizer",
 ]
-
-try:
-    from engine.model.synthesizer import NeuroSymbolicSynthesizer  # type: ignore
-except ImportError:
-    NeuroSymbolicSynthesizer = None  # type: ignore
