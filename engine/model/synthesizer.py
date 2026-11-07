@@ -28,6 +28,12 @@ class NeuroSymbolicSynthesizer:
     _cached_skills_memory_dict: dict[str, Any] | None = None
     _cached_skills_lm_dict: dict[str, Any] | None = None
 
+    @classmethod
+    def clear_cache(cls) -> None:
+        """Clear class-level cached memory and language model serialized dictionaries."""
+        cls._cached_skills_memory_dict = None
+        cls._cached_skills_lm_dict = None
+
     def __init__(
         self,
         memory: VectorMemory | None = None,

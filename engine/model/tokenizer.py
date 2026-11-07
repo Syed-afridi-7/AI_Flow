@@ -197,7 +197,10 @@ class CustomTokenizer:
             elif tok == "::" or prev == "::":
                 result.append(tok)
             elif tok == "." or prev == ".":
-                result.append(tok)
+                if prev == "." and (tok[0].isupper() or not tok.isidentifier()):
+                    result.append(" " + tok)
+                else:
+                    result.append(tok)
             elif tok in ("(", "[") and (prev.isidentifier() or prev in (")", "]")):
                 result.append(tok)
             elif (

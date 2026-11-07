@@ -36,7 +36,10 @@ try:
 except ImportError:
     pass  # dotenv is optional; user can set env vars directly
 
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -204,8 +207,18 @@ def extract_json_from_response(raw_text: str) -> dict:
 # ---------------------------------------------------------------------------
 # Provider API Callers
 # ---------------------------------------------------------------------------
+def _ensure_requests() -> None:
+    """Ensure requests library is installed when calling cloud APIs."""
+    if requests is None:
+        print("\n❌ The 'requests' library is required for cloud API execution.")
+        print("   Install it via: pip install requests")
+        print("   Or run in 100% offline local mode without any third-party packages: python run.py --mode local")
+        sys.exit(1)
+
+
 def call_gemini(system_prompt: str, user_prompt: str, api_key: str, model: str = "gemini-2.5-flash") -> str:
     """Call the Google Gemini API (v1beta generateContent)."""
+    _ensure_requests()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     payload = {
         "system_instruction": {
@@ -243,6 +256,7 @@ def call_gemini(system_prompt: str, user_prompt: str, api_key: str, model: str =
 
 def call_openai(system_prompt: str, user_prompt: str, api_key: str, model: str = "gpt-4o") -> str:
     """Call the OpenAI ChatCompletions API."""
+    _ensure_requests()
     url = "https://api.openai.com/v1/chat/completions"
     payload = {
         "model": model,
@@ -280,6 +294,7 @@ def call_openai(system_prompt: str, user_prompt: str, api_key: str, model: str =
 
 def call_anthropic(system_prompt: str, user_prompt: str, api_key: str, model: str = "claude-3-7-sonnet-latest") -> str:
     """Call the Anthropic Claude Messages API."""
+    _ensure_requests()
     url = "https://api.anthropic.com/v1/messages"
     payload = {
         "model": model,
@@ -318,6 +333,7 @@ def call_anthropic(system_prompt: str, user_prompt: str, api_key: str, model: st
 
 def call_grok(system_prompt: str, user_prompt: str, api_key: str, model: str = "grok-3-mini") -> str:
     """Call the xAI Grok API (OpenAI-compatible endpoint)."""
+    _ensure_requests()
     url = "https://api.x.ai/v1/chat/completions"
     payload = {
         "model": model,
