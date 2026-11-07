@@ -150,10 +150,12 @@ class TestRunnerOllama(unittest.TestCase):
         ]
 
         with patch.dict(runner.CALLERS, {"ollama": mock_call_ollama}):
-            with patch.object(sys, "argv", test_args):
-                runner.main()
+            with patch("pathlib.Path.write_text") as mock_write:
+                with patch.object(sys, "argv", test_args):
+                    runner.main()
 
         mock_call_ollama.assert_called_once()
+        mock_write.assert_called_once()
         call_kwargs = mock_call_ollama.call_args[1]
         self.assertEqual(call_kwargs["model"], "qwen2.5-coder:latest")
         self.assertEqual(call_kwargs["user_prompt"], "E-commerce platform")
@@ -176,11 +178,13 @@ class TestRunnerOllama(unittest.TestCase):
         ]
 
         with patch.dict(runner.CALLERS, {"ollama": mock_call_ollama}):
-            with patch.object(sys, "argv", test_args):
-                runner.main()
+            with patch("pathlib.Path.write_text") as mock_write:
+                with patch.object(sys, "argv", test_args):
+                    runner.main()
 
         # In dual mode, generator (turn 1) and validator (turn 2) are called
         self.assertEqual(mock_call_ollama.call_count, 2)
+        mock_write.assert_called_once()
 
 
 if __name__ == "__main__":
