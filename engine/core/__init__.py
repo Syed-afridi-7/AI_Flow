@@ -8,6 +8,7 @@ from engine.core.types import (
 from engine.core.base import BaseAgent, BaseGenerator, BaseValidator
 from engine.core.registry import AgentRegistry
 from engine.core.runner import DualAgentRunner
+from engine.core.task_manager import TaskManager, TaskRecord
 
 __all__ = [
     "Severity",
@@ -20,4 +21,6 @@ __all__ = [
     "BaseValidator",
     "AgentRegistry",
     "DualAgentRunner",
+    "TaskManager",
+    "TaskRecord",
 ]
