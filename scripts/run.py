@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 AI_Flow Skill Runner — Standalone Auto-Writer & Dual-Agent Autonomous Orchestrator
-Run any AI_Flow skill against Gemini, ChatGPT, Claude, or Grok APIs and save the output directly to disk.
+Run any AI_Flow skill against Gemini, ChatGPT, Claude, Grok, or local Ollama instances and save the output directly to disk.
 Supports both fast single-turn mode and autonomous dual-agent generation + validation loops.
 
 Usage:
@@ -12,6 +12,9 @@ Usage:
   # Autonomous dual-agent mode (Generator + Validator feedback loop)
   python run.py --skill accessibility-wcag-audit --input "Audit login form" --mode dual
   python run.py --skill api-contract-generator --input "Payments API" --mode dual --provider anthropic
+
+  # Local Ollama execution (zero cloud keys, zero pip dependencies)
+  python run.py --skill prd-generator --input "Local LLM task" --provider ollama
 
 Setup:
   1. pip install requests python-dotenv
@@ -25,6 +28,8 @@ import os
 import re
 import sys
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -68,6 +73,10 @@ PROVIDERS = {
         "env_key": "GROK_API_KEY",
         "name": "xAI Grok",
     },
+    "ollama": {
+        "env_key": "OLLAMA_HOST",
+        "name": "Ollama Local LLM",
+    },
 }
 
 # Model tiering defaults
@@ -76,6 +85,7 @@ DEFAULT_SINGLE_MODELS = {
     "openai": "gpt-4o",
     "anthropic": "claude-3-7-sonnet-latest",
     "grok": "grok-3-mini",
+    "ollama": "qwen2.5-coder:latest",
 }
 
 DEFAULT_FAST_MODELS = {
@@ -83,6 +93,7 @@ DEFAULT_FAST_MODELS = {
     "anthropic": "claude-3-5-sonnet-latest",
     "openai": "gpt-4o-mini",
     "grok": "grok-3-mini",
+    "ollama": "qwen2.5-coder:latest",
 }
 
 DEFAULT_REASONING_MODELS = {
@@ -90,6 +101,7 @@ DEFAULT_REASONING_MODELS = {
     "anthropic": "claude-3-7-sonnet-latest",
     "openai": "gpt-4o",
     "grok": "grok-3-mini",
+    "ollama": "qwen2.5-coder:latest",
 }
 
 
@@ -369,11 +381,64 @@ def call_grok(system_prompt: str, user_prompt: str, api_key: str, model: str = "
         sys.exit(1)
 
 
+def call_ollama(system_prompt: str, user_prompt: str, api_key: str = "", model: str = "qwen2.5-coder:latest") -> str:
+    """Call the Ollama local API (/api/generate) using only standard library urllib."""
+    host = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+    url = f"{host}/api/generate"
+    payload = {
+        "model": model,
+        "system": system_prompt,
+        "prompt": user_prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.7,
+        },
+    }
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            raw_body = resp.read().decode("utf-8")
+            res_data = json.loads(raw_body)
+            return res_data.get("response", "")
+    except urllib.error.HTTPError as e:
+        err_body = ""
+        try:
+            err_body = e.read().decode("utf-8")
+        except Exception:
+            pass
+        finally:
+            try:
+                e.close()
+            except Exception:
+                pass
+        print(f"\n❌ Ollama HTTP Error {e.code}: {e.reason}")
+        if err_body:
+            print(f"Details: {err_body}")
+        print(f"   Ensure Ollama is running and model '{model}' is pulled (run: ollama pull {model})")
+        sys.exit(1)
+    except urllib.error.URLError as e:
+        print(f"\n❌ Ollama Connection Error: {e.reason}")
+        print(f"   Could not connect to Ollama at {host}")
+        print("   Ensure Ollama service is running locally (`ollama serve`) or check OLLAMA_HOST.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n❌ Unexpected error calling Ollama: {e}")
+        sys.exit(1)
+
+
 CALLERS = {
     "gemini": call_gemini,
     "openai": call_openai,
     "anthropic": call_anthropic,
     "grok": call_grok,
+    "ollama": call_ollama,
 }
 
 
@@ -393,11 +458,12 @@ def detect_provider() -> str:
     prov = has_available_provider()
     if prov:
         return prov
-    print("\n❌ No API key found. Set one in your .env file:")
+    print("\n❌ No API key or provider found. Set one in your .env file:")
     print("   GEMINI_API_KEY=your-key-here")
     print("   OPENAI_API_KEY=your-key-here")
     print("   ANTHROPIC_API_KEY=your-key-here")
     print("   GROK_API_KEY=your-key-here")
+    print("   OLLAMA_HOST=http://localhost:11434 (for Ollama local LLM)")
     sys.exit(1)
 
 
@@ -417,6 +483,9 @@ Examples:
   # Autonomous dual-agent loop (Generator + Validator self-correction)
   python run.py --skill accessibility-wcag-audit --input "Audit login modal" --mode dual
   python run.py --skill api-contract-generator --input "Payments API" --mode dual --provider anthropic
+
+  # Local Ollama LLM execution
+  python run.py --skill prd-generator --input "Local LLM task" --provider ollama
 
   # List all available skills
   python run.py --list
@@ -470,6 +539,11 @@ Examples:
     if not args.input:
         parser.error("--input is required")
 
+    # If --provider is explicitly specified but --mode was left at default ("local"),
+    # automatically switch to "dual" mode.
+    if args.provider and args.mode == "local":
+        args.mode = "dual"
+
     # Resolve skill
     skill_dir = resolve_skill_dir(args.skill)
     skill_name = skill_dir.name
@@ -482,7 +556,7 @@ Examples:
     active_cloud_provider = args.provider or has_available_provider()
     if args.mode == "local" or not active_cloud_provider:
         if args.mode != "local" and not active_cloud_provider:
-            print(f"\nℹ️  No cloud API key found. Executing skill in 100% OFFLINE LOCAL mode with pure Python dual-agent engine.")
+            print(f"\nℹ️  No cloud API key or Ollama provider found. Executing skill in 100% OFFLINE LOCAL mode with pure Python dual-agent engine.")
         try:
             import engine.agents
             from engine.core.runner import DualAgentRunner
@@ -521,7 +595,9 @@ Examples:
     provider = args.provider or detect_provider()
     provider_cfg = PROVIDERS[provider]
     api_key = os.environ.get(provider_cfg["env_key"], "")
-    if not api_key:
+    if provider == "ollama" and not api_key:
+        api_key = "local"
+    elif not api_key:
         print(f"\n❌ {provider_cfg['name']} API key not found.")
         print(f"   Set {provider_cfg['env_key']} in your .env file.")
         sys.exit(1)
@@ -771,6 +847,28 @@ Examples:
                     print(f"\n❌ Anthropic API Error: {e}")
                     break
                 reply = resp.json()["content"][0]["text"]
+            elif provider == "ollama":
+                host = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+                url = f"{host}/api/chat"
+                payload = {
+                    "model": interactive_model,
+                    "messages": messages,
+                    "stream": False,
+                    "options": {"temperature": 0.7},
+                }
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                try:
+                    with urllib.request.urlopen(req, timeout=120) as resp:
+                        data = json.loads(resp.read().decode("utf-8"))
+                        reply = data.get("message", {}).get("content", "")
+                except Exception as e:
+                    print(f"\n❌ Ollama Error: {e}")
+                    break
             else:
                 base_url = "https://api.openai.com/v1" if provider == "openai" else "https://api.x.ai/v1"
                 payload = {
