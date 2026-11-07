@@ -36,6 +36,7 @@ class MarkovLanguageModel:
         tokenizer: CustomTokenizer | None = None,
         order: int = 3,
         laplace_alpha: float = 1.0,
+        seed: int | None = None,
     ) -> None:
         """Initialize the Markov Language Model.
 
@@ -43,15 +44,20 @@ class MarkovLanguageModel:
             tokenizer: CustomTokenizer instance (creates default if None).
             order: N-gram order (e.g. 3 for trigram model using 2 context tokens).
             laplace_alpha: Add-alpha smoothing parameter (default 1.0).
+            seed: Optional random seed for reproducible sampling.
         """
         self.tokenizer: CustomTokenizer = tokenizer if tokenizer is not None else CustomTokenizer()
         self.order: int = max(1, order)
         self.laplace_alpha: float = float(laplace_alpha)
+        self._rng: random.Random = random.Random(seed)
 
         self.unigram_counts: Counter[str] = Counter()
         self.transitions: dict[tuple[str, ...], Counter[str]] = {}
         self.vocab: set[str] = set(self.tokenizer.token_to_id.keys())
         self._sorted_vocab: list[str] | None = None
+        self._non_emittable: frozenset[str] = frozenset(
+            {self.tokenizer.BOS_TOKEN, self.tokenizer.PAD_TOKEN, self.tokenizer.UNK_TOKEN}
+        )
 
     @property
     def vocab_size(self) -> int:
@@ -172,14 +178,14 @@ class MarkovLanguageModel:
         """
         max_ctx_len = self.order - 1
 
-        if context:
+        if context and max_ctx_len > 0:
             ctx_tokens = context[-max_ctx_len:]
             # Try progressively shorter suffix tuples down to length 1
             for length in range(len(ctx_tokens), 0, -1):
                 ctx_tuple = tuple(ctx_tokens[-length:])
                 if ctx_tuple in self.transitions and len(self.transitions[ctx_tuple]) > 0:
                     return self.transitions[ctx_tuple]
-        else:
+        elif not context and max_ctx_len > 0:
             # Empty context: check for initial BOS transition
             bos_tuple = (self.tokenizer.BOS_TOKEN,) * max_ctx_len
             if bos_tuple in self.transitions and len(self.transitions[bos_tuple]) > 0:
@@ -206,31 +212,15 @@ class MarkovLanguageModel:
         if self.vocab_size == 0:
             return 0.0
 
-        counts = self._resolve_context_counts(context)
-        alpha = max(0.0, self.laplace_alpha)
-        total_counts = sum(counts.values())
-        denom = total_counts + (alpha * self.vocab_size)
-        if denom <= 0:
-            return 1.0 / self.vocab_size
-
-        token_count = counts.get(token, 0)
-        base_p = (token_count + alpha) / denom
-
-        if temperature == 1.0:
-            return base_p
-
-        # For temperature != 1.0, probability relative to vocabulary
-        if temperature <= 1e-5:
-            max_count = max(counts.values()) if counts else 0
-            return 1.0 if token_count == max_count and max_count > 0 else 0.0
-
-        return base_p ** (1.0 / temperature)
+        probs = self.get_next_token_probabilities(context, temperature=temperature, top_k=0)
+        return probs.get(token, 0.0)
 
     def get_next_token_probabilities(
         self,
         context: list[str],
         temperature: float = 1.0,
         top_k: int = 50,
+        filter_special: bool = False,
     ) -> dict[str, float]:
         """Compute Laplace smoothed probability distribution over candidate next tokens.
 
@@ -238,6 +228,7 @@ class MarkovLanguageModel:
             context: List of preceding token strings.
             temperature: Sampling temperature (T -> 0 sharpens mode, high T flattens).
             top_k: Number of highest-probability tokens to retain (0 or None for full vocab).
+            filter_special: If True, excludes internal control tokens (<bos>, <pad>, <unk>).
 
         Returns:
             Dictionary mapping candidate tokens to normalized probabilities summing to 1.0.
@@ -251,21 +242,42 @@ class MarkovLanguageModel:
 
         # Select candidate tokens fast without scanning all vocabulary when top_k is small
         if top_k is None or top_k <= 0 or top_k >= vocab_size:
-            candidates = self.sorted_vocab
-        else:
-            seen_tokens = [tok for tok, _ in counts.most_common(top_k)]
-            if len(seen_tokens) < top_k:
-                seen_set = set(seen_tokens)
-                needed = top_k - len(seen_tokens)
-                unseen: list[str] = []
-                for tok in self.sorted_vocab:
-                    if tok not in seen_set:
-                        unseen.append(tok)
-                        if len(unseen) == needed:
-                            break
-                candidates = seen_tokens + unseen
+            if filter_special:
+                candidates = [w for w in self.sorted_vocab if w not in self._non_emittable]
             else:
-                candidates = seen_tokens[:top_k]
+                candidates = self.sorted_vocab
+        else:
+            if filter_special:
+                seen_tokens = [
+                    tok for tok, _ in counts.most_common(top_k * 2)
+                    if tok not in self._non_emittable
+                ][:top_k]
+                if len(seen_tokens) < top_k:
+                    seen_set = set(seen_tokens)
+                    needed = top_k - len(seen_tokens)
+                    unseen: list[str] = []
+                    for tok in self.sorted_vocab:
+                        if tok not in seen_set and tok not in self._non_emittable:
+                            unseen.append(tok)
+                            if len(unseen) == needed:
+                                break
+                    candidates = seen_tokens + unseen
+                else:
+                    candidates = seen_tokens[:top_k]
+            else:
+                seen_tokens = [tok for tok, _ in counts.most_common(top_k)]
+                if len(seen_tokens) < top_k:
+                    seen_set = set(seen_tokens)
+                    needed = top_k - len(seen_tokens)
+                    unseen = []
+                    for tok in self.sorted_vocab:
+                        if tok not in seen_set:
+                            unseen.append(tok)
+                            if len(unseen) == needed:
+                                break
+                    candidates = seen_tokens + unseen
+                else:
+                    candidates = seen_tokens[:top_k]
 
         if not candidates:
             return {}
@@ -322,6 +334,7 @@ class MarkovLanguageModel:
             context,
             temperature=temperature,
             top_k=top_k,
+            filter_special=True,
         )
         if not probs:
             return self.tokenizer.UNK_TOKEN
@@ -344,7 +357,7 @@ class MarkovLanguageModel:
         if len(nucleus_tokens) == 1:
             return nucleus_tokens[0]
 
-        return random.choices(nucleus_tokens, weights=nucleus_weights, k=1)[0]
+        return self._rng.choices(nucleus_tokens, weights=nucleus_weights, k=1)[0]
 
     def generate(
         self,
@@ -397,11 +410,11 @@ class MarkovLanguageModel:
                     break
 
         tokens_to_decode = (prompt_tokens + generated_tokens) if include_prompt else generated_tokens
-        token_ids = [
-            self.tokenizer.token_to_id.get(tok, self.tokenizer.UNK_ID)
-            for tok in tokens_to_decode
+        clean_tokens = [
+            tok for tok in tokens_to_decode
+            if tok not in (self.tokenizer.BOS_TOKEN, self.tokenizer.EOS_TOKEN, self.tokenizer.PAD_TOKEN)
         ]
-        return self.tokenizer.decode(token_ids, skip_special_tokens=True)
+        return self.tokenizer._detokenize(clean_tokens)
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize model parameters and transition counts to dictionary."""
