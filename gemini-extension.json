@@ -1,0 +1,7 @@
+{
+  "name": "ai-flow",
+  "description": "Production-grade framework of 30 standardized Agentic Skills and 60 dual-agent personas with from-scratch pure Python Hybrid Neuro-Symbolic AI engine.",
+  "version": "1.0.0",
+  "contextFileName": "GEMINI.md",
+  "skills": "./skills"
+}
