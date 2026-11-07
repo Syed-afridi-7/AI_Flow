@@ -48,7 +48,7 @@ class BaseGenerator(BaseAgent):
     def refine(self, context: TaskContext, previous: GenerationResult, blockers: list[Blocker]) -> GenerationResult:
         """Self-correct programmatic violations identified by the Validator."""
         if self.synthesizer is not None and blockers:
-            repaired_content = self.synthesizer.repair(previous.content, [b.message for b in blockers])
+            repaired_content = self.synthesizer.repair(previous.content, blockers)
             return GenerationResult(
                 skill_name=self.skill_name,
                 content=repaired_content,

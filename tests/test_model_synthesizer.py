@@ -198,6 +198,22 @@ class TestModelSynthesizer(unittest.TestCase):
         repaired_from_obj = self.synthesizer.repair(sql_content, [blocker_obj])
         self.assertIn("CREATE INDEX", repaired_from_obj)
 
+        # 9. Markdown code fence insertion positioning
+        md_sql = "# Database Schema\n\n```sql\nCREATE TABLE items (id INT);\n```\n"
+        repaired_md = self.synthesizer.repair(md_sql, ["no index defined"])
+        self.assertIn("CREATE INDEX", repaired_md)
+        sql_block = repaired_md[repaired_md.find("```sql") : repaired_md.rfind("```")]
+        self.assertIn("CREATE INDEX", sql_block)
+
+        # 10. Additional rules: lock timeout and Docker healthcheck
+        md_migration = "# Migration\n\n```sql\nALTER TABLE users ADD COLUMN name TEXT;\n```\n"
+        repaired_timeout = self.synthesizer.repair(md_migration, ["lock_timeout missing"])
+        self.assertIn("SET lock_timeout = '2s';", repaired_timeout)
+
+        docker_hc = "FROM alpine\nCMD [\"sh\"]\n"
+        repaired_hc = self.synthesizer.repair(docker_hc, ["docker_no_healthcheck"])
+        self.assertIn("HEALTHCHECK", repaired_hc)
+
     def test_base_generator_integration(self) -> None:
         """Verify BaseGenerator accepts synthesizer, delegates context retrieval and refinement."""
         gen = DummyGenerator(

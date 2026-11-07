@@ -208,7 +208,7 @@ class NeuroSymbolicSynthesizer:
                             "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;\n"
                         )
                         if "```sql" in repaired:
-                            repaired = re.sub(r'(\n```)', f"{cascade_sql}\\1", repaired, count=1)
+                            repaired = re.sub(r'(```sql[\s\S]*?)(\n```)', rf'\1{cascade_sql}\2', repaired, count=1)
                         else:
                             repaired = f"{repaired.rstrip()}\n{cascade_sql}"
 
@@ -218,23 +218,23 @@ class NeuroSymbolicSynthesizer:
             if any(term in lowered for term in ["index", "no index", "composite index", "db_no_index", "migration_blocking_index"]):
                 # Case A: Concurrent Index Fix
                 if any(w in lowered for w in ["concurrent", "lock", "blocking"]):
-                    if "CREATE INDEX" in repaired and "CONCURRENTLY" not in repaired:
+                    if "CREATE" in repaired and "CONCURRENTLY" not in repaired:
                         repaired = re.sub(
-                            r'CREATE\s+INDEX\s+(?!CONCURRENTLY)',
+                            r'CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?!CONCURRENTLY)',
                             'CREATE INDEX CONCURRENTLY ',
                             repaired,
                             flags=re.IGNORECASE,
                         )
 
                 # Case B: Missing Index Fix
-                if "CREATE INDEX" not in repaired and "INDEX" not in repaired:
+                if not re.search(r'\bCREATE\s+(?:UNIQUE\s+)?INDEX\b', repaired, re.IGNORECASE):
                     index_block = (
                         "\n-- Composite and Foreign Key Indexes\n"
                         "CREATE INDEX IF NOT EXISTS idx_records_created_at ON records (created_at DESC);\n"
                         "CREATE INDEX IF NOT EXISTS idx_records_composite ON records (user_id, status);\n"
                     )
                     if "```sql" in repaired:
-                        repaired = re.sub(r'(\n```)', f"{index_block}\\1", repaired, count=1)
+                        repaired = re.sub(r'(```sql[\s\S]*?)(\n```)', rf'\1{index_block}\2', repaired, count=1)
                     else:
                         repaired = f"{repaired.rstrip()}\n{index_block}"
 
@@ -273,7 +273,7 @@ class NeuroSymbolicSynthesizer:
                             flags=re.MULTILINE,
                         )
                     elif "```dockerfile" in repaired:
-                        repaired = re.sub(r'(\n```)', f"\n{user_block.rstrip()}\n\\1", repaired, count=1)
+                        repaired = re.sub(r'(```dockerfile[\s\S]*?)(\n```)', rf'\1\n{user_block.rstrip()}\2', repaired, count=1)
                     else:
                         repaired = f"{repaired.rstrip()}\n\n{user_block.rstrip()}\n"
 
@@ -332,7 +332,10 @@ class NeuroSymbolicSynthesizer:
             if any(term in lowered for term in ["lock_timeout", "migration_no_timeout"]):
                 if "lock_timeout" not in repaired:
                     timeout_header = "SET lock_timeout = '2s';\nSET statement_timeout = '30s';\n\n"
-                    repaired = f"{timeout_header}{repaired}"
+                    if "```sql" in repaired:
+                        repaired = re.sub(r'(```sql\s*\n)', rf'\1{timeout_header}', repaired, count=1)
+                    else:
+                        repaired = f"{timeout_header}{repaired}"
 
             # ----------------------------------------------------------------
             # 8. Docker Container Healthcheck
