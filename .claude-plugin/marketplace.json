@@ -1,0 +1,30 @@
+{
+  "name": "ai-flow",
+  "owner": {
+    "name": "Syed Afridi",
+    "url": "https://github.com/syedafridi"
+  },
+  "plugins": [
+    {
+      "name": "ai-flow",
+      "source": "./",
+      "description": "Production-grade framework of 30 standardized Agentic Skills and 60 dual-agent personas with from-scratch pure Python Hybrid Neuro-Symbolic AI engine.",
+      "author": {
+        "name": "Syed Afridi"
+      },
+      "repository": "https://github.com/syedafridi/AI_Flow",
+      "license": "MIT",
+      "keywords": [
+        "ai-agents",
+        "skills",
+        "neuro-symbolic",
+        "software-development",
+        "tdd",
+        "code-review",
+        "prd",
+        "trd",
+        "security-audit"
+      ]
+    }
+  ]
+}
