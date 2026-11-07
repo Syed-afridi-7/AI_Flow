@@ -19,15 +19,22 @@ const plugin = {
    * Returns list of available skills and their metadata.
    */
   getSkills() {
-    if (!fs.existsSync(this.skillsPath)) {
+    let resolvedPath = this.skillsPath;
+    if (!fs.existsSync(resolvedPath)) {
+      const adjacentSkills = path.resolve(__dirname, '../skills');
+      if (fs.existsSync(adjacentSkills)) {
+        resolvedPath = adjacentSkills;
+      }
+    }
+    if (!fs.existsSync(resolvedPath)) {
       return [];
     }
-    return fs.readdirSync(this.skillsPath, { withFileTypes: true })
-      .filter((dirent) => dirent.isDirectory())
+    return fs.readdirSync(resolvedPath, { withFileTypes: true })
+      .filter((dirent) => dirent.isDirectory() || dirent.isSymbolicLink())
       .map((dirent) => ({
         name: dirent.name,
-        path: path.join(this.skillsPath, dirent.name),
-        skillFile: path.join(this.skillsPath, dirent.name, 'SKILL.md'),
+        path: path.join(resolvedPath, dirent.name),
+        skillFile: path.join(resolvedPath, dirent.name, 'SKILL.md'),
       }));
   },
 
