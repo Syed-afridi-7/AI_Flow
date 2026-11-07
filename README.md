@@ -174,17 +174,44 @@ python scripts/run.py --list
 
 ---
 
-### 3. Native Agent Skills Installation
-Install all 30 skills directly into your global agent environment:
+### 3. Universal Multi-CLI & Agent Skills Installation
+Install all skills and native plugin manifests across **Google Antigravity & Gemini IDE, OpenAI Codex, xAI Grok, OpenCode, Claude Code, Cursor AI, and Open Agents**:
 
 ```powershell
-# Windows
-.\scripts\install.ps1
+# Windows (Universal installer across all 7 CLI environments)
+powershell -File scripts/install.ps1 -Target all
+
+# Or target specific tools
+powershell -File scripts/install.ps1 -Target antigravity
+powershell -File scripts/install.ps1 -Target codex
+powershell -File scripts/install.ps1 -Target grok
+powershell -File scripts/install.ps1 -Target opencode
+powershell -File scripts/install.ps1 -Target claude
+powershell -File scripts/install.ps1 -Target cursor
+
+# Verify all filesystem installations and manifest integrity
+python scripts/verify_install.py
 ```
 
 ```bash
 # macOS / Linux
 chmod +x ./scripts/install.sh && ./scripts/install.sh
+```
+
+For complete CLI integration instructions, see [Multi-CLI Installation & Activation Guide](docs/MULTI_CLI_INSTALLATION_GUIDE.md).
+
+---
+
+### 4. 100% Offline Local LLMs with Ollama
+Build the custom `ai-flow` model or run any local open-weight model:
+
+```bash
+# Build custom tuned model
+ollama create ai-flow -f Modelfile
+
+# Run skills using local Ollama
+python scripts/run.py --provider ollama --skill prd-generator --input "Decentralized payment gateway"
+python scripts/run.py --provider ollama --mode dual --skill security-gap-audit --input "Audit auth middleware"
 ```
 
 ---
