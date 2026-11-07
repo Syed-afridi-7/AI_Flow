@@ -35,11 +35,15 @@ SPECIAL_TOKENS: dict[str, int] = {
 _TOKEN_PATTERN = re.compile(
     r"<pad>|<unk>|<bos>|<eos>"
     r"|<!--|-->|\.\.\."
-    r"|->|=>|::|==|!=|<=|>=|&&|\|\||\+\+|--|\+=|-=|\*=|/=|<<|>>|\*\*|//"
+    r"|===|!==|->|=>|::|==|!=|<=|>=|&&|\|\||\+\+|--|\+=|-=|\*=|/=|<<|>>|\*\*|//|:=|\?\?|\?\."
+    r"|```|\"\"\"|'''"
     r"|\d+\.\d+"
     r"|\w+"
     r"|\S"
 )
+
+_NO_SPACE_BEFORE: frozenset[str] = frozenset({",", ";", ":", ".", "!", "?", ")", "]", "}"})
+_NO_SPACE_AFTER: frozenset[str] = frozenset({"(", "[", "{", "@"})
 
 
 class CustomTokenizer:
@@ -145,14 +149,14 @@ class CustomTokenizer:
             text: Input string to encode.
             add_special_tokens: If True, wraps token IDs with <bos> and <eos>.
         """
-        if not text:
+        if not text or not text.strip():
             return []
         tokens = self.tokenize(text)
-        unk_id = self.token_to_id[UNK_TOKEN]
+        unk_id = self.token_to_id.get(UNK_TOKEN, UNK_ID)
         ids = [self.token_to_id.get(tok, unk_id) for tok in tokens]
         if add_special_tokens:
-            bos_id = self.token_to_id[BOS_TOKEN]
-            eos_id = self.token_to_id[EOS_TOKEN]
+            bos_id = self.token_to_id.get(BOS_TOKEN, BOS_ID)
+            eos_id = self.token_to_id.get(EOS_TOKEN, EOS_ID)
             return [bos_id] + ids + [eos_id]
         return ids
 
@@ -168,7 +172,7 @@ class CustomTokenizer:
         tokens: list[str] = []
         for token_id in ids:
             tok = self.id_to_token.get(token_id, UNK_TOKEN)
-            if skip_special_tokens and (tok in SPECIAL_TOKENS or token_id in SPECIAL_TOKENS.values()):
+            if skip_special_tokens and (tok in self.SPECIAL_TOKENS):
                 continue
             tokens.append(tok)
         return self._detokenize(tokens)
@@ -179,9 +183,6 @@ class CustomTokenizer:
         if not tokens:
             return ""
 
-        no_space_before = {",", ";", ":", ".", "!", "?", ")", "]", "}"}
-        no_space_after = {"(", "[", "{", "@"}
-
         result: list[str] = []
         for i, tok in enumerate(tokens):
             if i == 0:
@@ -189,9 +190,9 @@ class CustomTokenizer:
                 continue
             prev = tokens[i - 1]
 
-            if tok in no_space_before:
+            if tok in _NO_SPACE_BEFORE:
                 result.append(tok)
-            elif prev in no_space_after:
+            elif prev in _NO_SPACE_AFTER:
                 result.append(tok)
             elif tok == "::" or prev == "::":
                 result.append(tok)
