@@ -8,19 +8,15 @@ Provides from-scratch, pure Python standard library components:
 """
 
 from engine.model.tokenizer import CustomTokenizer
+from engine.model.vector_memory import MemoryMatch, VectorMemory
 
 __all__ = [
     "CustomTokenizer",
     "VectorMemory",
+    "MemoryMatch",
     "MarkovLanguageModel",
     "NeuroSymbolicSynthesizer",
 ]
-
-# Conditional/stub imports for upcoming components (Components 2, 3, 4)
-try:
-    from engine.model.vector_memory import VectorMemory  # type: ignore
-except ImportError:
-    VectorMemory = None  # type: ignore
 
 try:
     from engine.model.language_model import MarkovLanguageModel  # type: ignore
