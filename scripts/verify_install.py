@@ -83,12 +83,23 @@ def main():
         else:
             results.append((True, f"[PASS] File verified: {name} ({size} bytes) -> {path}"))
 
+    # 0. Repository Engine Core
+    print("[*] Target 0: Repository Engine Core...")
+    check_dir("Repo Engine Core Dir", REPO_ROOT / "engine" / "core")
+    check_file("Repo Engine task_manager.py", REPO_ROOT / "engine" / "core" / "task_manager.py")
+    check_file("Repo Engine worker.py", REPO_ROOT / "engine" / "core" / "worker.py")
+    check_file("Repo Engine dispatcher.py", REPO_ROOT / "engine" / "core" / "dispatcher.py")
+
     # 1. Antigravity & Gemini CLI
     print("[*] Target 1: Google Antigravity & Gemini IDE...")
     check_skills_target("Antigravity Skills (~/.gemini/antigravity/skills)", home / ".gemini" / "antigravity" / "skills")
     check_skills_target("Antigravity CLI Skills (~/.gemini/antigravity-cli/skills)", home / ".gemini" / "antigravity-cli" / "skills")
     check_dir("Antigravity Plugin Dir (~/.gemini/config/plugins/ai-flow)", home / ".gemini" / "config" / "plugins" / "ai-flow")
     check_skills_target("Antigravity Plugin Embedded Skills", home / ".gemini" / "config" / "plugins" / "ai-flow" / "skills")
+    check_dir("Antigravity Plugin Engine Dir", home / ".gemini" / "config" / "plugins" / "ai-flow" / "engine")
+    check_file("Antigravity Engine task_manager.py", home / ".gemini" / "config" / "plugins" / "ai-flow" / "engine" / "core" / "task_manager.py")
+    check_file("Antigravity Engine worker.py", home / ".gemini" / "config" / "plugins" / "ai-flow" / "engine" / "core" / "worker.py")
+    check_file("Antigravity Engine dispatcher.py", home / ".gemini" / "config" / "plugins" / "ai-flow" / "engine" / "core" / "dispatcher.py")
     check_file("Antigravity gemini-extension.json", home / ".gemini" / "config" / "plugins" / "ai-flow" / "gemini-extension.json", is_json=True)
     check_file("Antigravity plugin.json", home / ".gemini" / "config" / "plugins" / "ai-flow" / "plugin.json", is_json=True)
     check_file("Antigravity GEMINI.md", home / ".gemini" / "config" / "plugins" / "ai-flow" / "GEMINI.md")
@@ -98,6 +109,10 @@ def main():
     check_skills_target("Codex Skills (~/.codex/skills)", home / ".codex" / "skills")
     check_dir("Codex Plugin Dir (~/.codex/plugins/ai-flow)", home / ".codex" / "plugins" / "ai-flow")
     check_skills_target("Codex Plugin Embedded Skills", home / ".codex" / "plugins" / "ai-flow" / "skills")
+    check_dir("Codex Plugin Engine Dir", home / ".codex" / "plugins" / "ai-flow" / "engine")
+    check_file("Codex Engine task_manager.py", home / ".codex" / "plugins" / "ai-flow" / "engine" / "core" / "task_manager.py")
+    check_file("Codex Engine worker.py", home / ".codex" / "plugins" / "ai-flow" / "engine" / "core" / "worker.py")
+    check_file("Codex Engine dispatcher.py", home / ".codex" / "plugins" / "ai-flow" / "engine" / "core" / "dispatcher.py")
     check_file("Codex plugin.json", home / ".codex" / "plugins" / "ai-flow" / "plugin.json", is_json=True)
     check_file("Codex .codex-plugin/plugin.json", home / ".codex" / "plugins" / "ai-flow" / ".codex-plugin" / "plugin.json", is_json=True)
 

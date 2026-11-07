@@ -216,6 +216,30 @@ python scripts/run.py --provider ollama --mode dual --skill security-gap-audit -
 
 ---
 
+### 5. Asynchronous Background Agents & Task Management
+Dispatch skills to run autonomously in detached background processes (< 50ms non-blocking return) backed by an ACID SQLite task ledger (`data/tasks.db`):
+
+```bash
+# Asynchronously dispatch an agent in the background
+python -m engine.cli --skill prd-generator --input "Decentralized video platform" --background
+
+# Or dispatch with local Ollama models
+python scripts/run.py --skill backend-schema --input "SaaS Auth Schema" --provider ollama --background
+
+# Check task lifecycle status and scores
+python -m engine.cli --status <task_id>
+
+# View execution logs and list all background tasks
+python -m engine.cli --logs <task_id> --tail 50
+python -m engine.cli --list-tasks
+
+# Cancel a running task or prune historical tasks
+python -m engine.cli --cancel <task_id>
+python -m engine.cli --prune-tasks --days 7
+```
+
+---
+
 ## 🤖 Cross-Runtime Configuration Adapters
 
 - **[SKILL.md](SKILL.md):** Unified master spec covering all modules for direct upload to Gemini or ChatGPT.
