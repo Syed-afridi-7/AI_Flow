@@ -122,6 +122,31 @@ class VectorMemory:
         }
         self._dirty = True
 
+    def remove_document(self, doc_id: str) -> bool:
+        """Remove a document from vector memory.
+
+        Returns True if removed, False if document was not found.
+        """
+        if doc_id not in self.documents:
+            return False
+        old_unique = set(self.documents[doc_id]["tokens"])
+        for term in old_unique:
+            self.doc_freqs[term] -= 1
+            if self.doc_freqs[term] <= 0:
+                del self.doc_freqs[term]
+        del self.documents[doc_id]
+        if doc_id in self._doc_vectors:
+            del self._doc_vectors[doc_id]
+        self._dirty = True
+        return True
+
+    def clear(self) -> None:
+        """Clear all documents and vectors from memory."""
+        self.documents.clear()
+        self.doc_freqs.clear()
+        self._doc_vectors.clear()
+        self._dirty = False
+
     def index_directory(
         self,
         dir_path: str | Path,
@@ -267,7 +292,9 @@ class VectorMemory:
             doc_vec = self._doc_vectors.get(doc_id)
             if not doc_vec:
                 continue
-            sim = self.cosine_similarity(query_vec, doc_vec)
+            # Both query_vec and doc_vec are L2 unit-normalized, so cosine similarity is the dot product
+            dot = sum(v * doc_vec[k] for k, v in query_vec.items() if k in doc_vec)
+            sim = max(-1.0, min(1.0, dot))
 
             if threshold < 0.0:
                 passes = True
@@ -287,7 +314,7 @@ class VectorMemory:
                 )
 
         scored.sort(key=lambda m: (-m.score, m.doc_id))
-        return scored[:top_k]
+        return scored[: max(0, top_k)]
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize vector memory state to JSON-compatible dictionary."""
