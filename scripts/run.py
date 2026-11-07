@@ -364,11 +364,19 @@ CALLERS = {
 # ---------------------------------------------------------------------------
 # Auto-detect available provider
 # ---------------------------------------------------------------------------
-def detect_provider() -> str:
-    """Return the first provider that has an API key configured."""
+def has_available_provider() -> str | None:
+    """Return the first provider that has an API key configured, or None."""
     for name, cfg in PROVIDERS.items():
         if os.environ.get(cfg["env_key"]):
             return name
+    return None
+
+
+def detect_provider() -> str:
+    """Return the first provider that has an API key configured."""
+    prov = has_available_provider()
+    if prov:
+        return prov
     print("\n❌ No API key found. Set one in your .env file:")
     print("   GEMINI_API_KEY=your-key-here")
     print("   OPENAI_API_KEY=your-key-here")
@@ -453,8 +461,12 @@ Examples:
 
     # -----------------------------------------------------------------------
     # Local Offline Mode (Pure Python Engine, Zero API Keys)
+    # Activates automatically if mode is 'local' or if no cloud API keys exist.
     # -----------------------------------------------------------------------
-    if args.mode == "local":
+    active_cloud_provider = args.provider or has_available_provider()
+    if args.mode == "local" or not active_cloud_provider:
+        if args.mode != "local" and not active_cloud_provider:
+            print(f"\nℹ️  No cloud API key found. Executing skill in 100% OFFLINE LOCAL mode with pure Python dual-agent engine.")
         try:
             import engine.agents
             from engine.core.runner import DualAgentRunner
